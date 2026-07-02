@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Undangan Balanglompo — Undangan Pernikahan Digital</title>
+<meta name="description" content="Undangan pernikahan digital elegan dengan QR check-in tamu, dasbor RSVP real-time, dan kirim WhatsApp per tamu. Dibuat dengan ❤️ di Pangkep, Sulawesi Selatan." />
+<meta name="theme-color" content="#6e4046" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Undangan Balanglompo — Undangan Pernikahan Digital" />
+<meta property="og:description" content="Undangan digital elegan: QR check-in, dasbor tamu real-time, kirim WhatsApp per tamu. Mulai Rp 149rb." />
+<meta property="og:url" content="https://undangan.balanglompo.com/" />
+<link rel="canonical" href="https://undangan.balanglompo.com/" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Carattere&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7efec; --ink: #4a3b3b; --muted: #8a7d7d;
+    --gold: #bd9968; --gold-soft: #e1c79a;
+    --deep: #6e4046; --deep2: #8a5760; --line: #ecdcd6;
+    --script: 'Carattere', cursive; --serif: 'Lora', serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--serif); color: var(--ink); background: var(--bg); line-height: 1.65; }
+  a { color: var(--deep); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px; }
+
+  /* ---------- HERO ---------- */
+  .hero { background: linear-gradient(160deg, var(--deep) 0%, #5c373d 60%, #4c2d32 100%); color: #fff;
+          text-align: center; padding: 72px 22px 64px; }
+  .eyebrow { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 14px; }
+  .brand { font-family: var(--script); font-size: clamp(44px, 9vw, 72px); line-height: 1.1; color: #fff; font-weight: 400; }
+  .tagline { max-width: 560px; margin: 18px auto 0; font-size: 17px; color: #f2e6e2; }
+  .hero .cta { margin-top: 30px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 13px 26px; border-radius: 40px; text-decoration: none;
+         font-size: 15px; font-weight: 600; letter-spacing: .3px; }
+  .btn-gold { background: linear-gradient(120deg, var(--gold), var(--gold-soft)); color: #4a3320; }
+  .btn-line { border: 1.5px solid rgba(255,255,255,.55); color: #fff; }
+  .divider { width: 70px; height: 1px; margin: 14px auto; background: linear-gradient(90deg, transparent, var(--gold-soft), transparent); }
+
+  /* ---------- SECTIONS ---------- */
+  section { padding: 56px 0; }
+  .sec-title { font-family: var(--script); font-size: 40px; text-align: center; color: var(--deep); font-weight: 400; }
+  .sec-sub { text-align: center; color: var(--muted); max-width: 520px; margin: 6px auto 34px; font-size: 15px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .feat { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .feat .ic { font-size: 26px; }
+  .feat h3 { font-size: 16px; margin: 8px 0 4px; color: var(--deep); }
+  .feat p { font-size: 14px; color: var(--muted); }
+
+  .pkg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; align-items: stretch; }
+  .pkg { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px 22px; text-align: center;
+         display: flex; flex-direction: column; }
+  .pkg.hot { border: 2px solid var(--gold); position: relative; }
+  .pkg.hot::before { content: "Paling Laris"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+        background: var(--gold); color: #fff; font-size: 11px; letter-spacing: 1px; padding: 3px 14px; border-radius: 20px; }
+  .pkg h3 { font-size: 17px; color: var(--deep); }
+  .pkg .price { font-size: 30px; font-weight: 600; color: var(--gold); margin: 6px 0 2px; }
+  .pkg .per { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .pkg ul { list-style: none; text-align: left; font-size: 14px; color: var(--ink); flex: 1; }
+  .pkg li { padding: 5px 0 5px 24px; position: relative; border-bottom: 1px dashed var(--line); }
+  .pkg li:last-child { border-bottom: none; }
+  .pkg li::before { content: "✓"; position: absolute; left: 2px; color: var(--gold); font-weight: 700; }
+  .pkg .btn { margin-top: 16px; background: var(--deep); color: #fff; font-size: 14px; padding: 11px 20px; }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; counter-reset: langkah; }
+  .step { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px; counter-increment: langkah; }
+  .step::before { content: counter(langkah); display: inline-flex; width: 34px; height: 34px; border-radius: 50%;
+        background: var(--deep); color: #fff; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 10px; }
+  .step h3 { font-size: 15.5px; color: var(--deep); margin-bottom: 4px; }
+  .step p { font-size: 14px; color: var(--muted); }
+
+  .demo { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: center; }
+  .demo .btn { background: var(--deep); color: #fff; margin-top: 8px; }
+
+  .contact { text-align: center; }
+  .contact .btn { background: #25D366; color: #fff; }
+  .contact .alt { margin-top: 12px; font-size: 14px; color: var(--muted); }
+
+  footer { background: var(--deep); color: #e9d7d2; text-align: center; padding: 34px 22px; font-size: 13.5px; }
+  footer .love { color: var(--gold-soft); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">Undangan Pernikahan Digital</div>
+  <div class="brand">Undangan Balanglompo</div>
+  <div class="divider"></div>
+  <p class="tagline">Undangan digital elegan dengan <b>QR check-in tamu</b>, <b>dasbor RSVP real-time</b>,
+     dan <b>kirim WhatsApp per tamu</b> — ringan dibuka di jaringan mana pun.</p>
+  <div class="cta">
+    <a class="btn btn-gold" href="https://hennyfarid.balanglompo.com" target="_blank" rel="noopener">Lihat Contoh Undangan</a>
+    <a class="btn btn-line" href="#paket">Lihat Paket</a>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2 class="sec-title">Kenapa Berbeda</h2>
+    <p class="sec-sub">Fitur yang biasanya jadi tambahan berbayar di tempat lain, di sini sudah termasuk.</p>
+    <div class="feat-grid">
+      <div class="feat"><div class="ic">💌</div><h3>Link Personal per Tamu</h3><p>Nama tamu tampil di sampul undangan. Pesan WhatsApp + link dibuat otomatis untuk setiap tamu.</p></div>
+      <div class="feat"><div class="ic">📷</div><h3>QR Check-in di Lokasi</h3><p>Setiap tamu punya QR unik. Panitia tinggal scan — kehadiran tercatat otomatis, tanpa buku tamu.</p></div>
+      <div class="feat"><div class="ic">📊</div><h3>Dasbor Real-Time</h3><p>Pantau siapa sudah membuka undangan, konfirmasi hadir, jumlah pax untuk katering, hingga check-in hari-H.</p></div>
+      <div class="feat"><div class="ic">🎬</div><h3>Video &amp; Galeri Sinematik</h3><p>Intro video, galeri foto elegan, musik latar, hitung mundur, amplop digital, dan doa-doa tamu.</p></div>
+      <div class="feat"><div class="ic">⚡</div><h3>Ringan &amp; Cepat</h3><p>Dioptimalkan untuk jaringan seluler daerah — tamu tidak menunggu lama, kuota tidak boros.</p></div>
+      <div class="feat"><div class="ic">🤝</div><h3>Didampingi Langsung</h3><p>Dibantu dari persiapan daftar tamu sampai sistem check-in berjalan di hari bahagia Anda.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="demo">
+  <div class="wrap">
+    <h2 class="sec-title">Lihat Langsung Contohnya</h2>
+    <p class="sec-sub">Undangan pertama kami dipakai di pernikahan kami sendiri — silakan dicoba.</p>
+    <a class="btn" href="https://hennyfarid.balanglompo.com" target="_blank" rel="noopener">Buka Contoh Undangan ↗</a>
+  </div>
+</section>
+
+<section id="paket">
+  <div class="wrap">
+    <h2 class="sec-title">Paket Harga</h2>
+    <p class="sec-sub">Harga perkenalan — sudah termasuk semua fitur di paketnya, tanpa biaya tersembunyi.</p>
+    <div class="pkg-grid">
+      <div class="pkg">
+        <h3>Hemat</h3><div class="price">Rp 149rb</div><div class="per">per acara</div>
+        <ul>
+          <li>Desain tema siap pakai</li>
+          <li>Link personal per tamu</li>
+          <li>RSVP &amp; ucapan doa</li>
+          <li>Galeri foto &amp; musik</li>
+          <li>Amplop digital</li>
+        </ul>
+        <a class="btn" href="#kontak">Pilih Paket</a>
+      </div>
+      <div class="pkg hot">
+        <h3>Favorit</h3><div class="price">Rp 299rb</div><div class="per">per acara</div>
+        <ul>
+          <li>Semua fitur paket Hemat</li>
+          <li>QR check-in + halaman scanner</li>
+          <li>Dasbor tamu real-time</li>
+          <li>Kirim WhatsApp per tamu</li>
+          <li>Lacak siapa sudah buka undangan</li>
+        </ul>
+        <a class="btn" href="#kontak">Pilih Paket</a>
+      </div>
+      <div class="pkg">
+        <h3>Eksklusif</h3><div class="price">Rp 750rb+</div><div class="per">per acara</div>
+        <ul>
+          <li>Semua fitur paket Favorit</li>
+          <li>Video intro khusus</li>
+          <li>Subdomain nama sendiri</li>
+          <li>Love story ditulis khusus</li>
+          <li>Pendampingan hari-H</li>
+        </ul>
+        <a class="btn" href="#kontak">Pilih Paket</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="sec-title">Cara Pesan</h2>
+    <div class="steps">
+      <div class="step"><h3>Hubungi kami</h3><p>Kirim tanggal acara &amp; paket yang diinginkan. Kami balas dengan detail &amp; kebutuhan bahan.</p></div>
+      <div class="step"><h3>Kirim bahan</h3><p>Foto, nama, jadwal, lokasi, dan kisah cinta Anda. Undangan disiapkan &amp; direvisi sampai pas.</p></div>
+      <div class="step"><h3>Sebar &amp; pantau</h3><p>Terima link + daftar tamu siap sebar via WhatsApp. Pantau RSVP dari dasbor Anda sendiri.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="kontak">
+  <div class="wrap">
+    <h2 class="sec-title">Pesan Sekarang</h2>
+    <p class="sec-sub">Ceritakan rencana acara Anda — kami bantu dari awal sampai hari-H.</p>
+    <!-- GANTI nomor WA usaha di bawah (format 62...) lalu hapus komentar ini.
+         Selama belum diganti, tombol email di bawahnya yang jadi kontak utama. -->
+    <!-- <a class="btn" href="https://wa.me/62XXXXXXXXXX?text=Halo%20Undangan%20Balanglompo%2C%20saya%20mau%20tanya%20paket%20undangan%20digital">💬 Chat WhatsApp</a> -->
+    <a class="btn" style="background:var(--deep)" href="mailto:prof.mf3@gmail.com?subject=Pesan%20Undangan%20Digital">✉️ Email Kami</a>
+    <p class="alt">prof.mf3@gmail.com · Pulau Balang Lompo, Pangkep, Sulawesi Selatan</p>
+  </div>
+</section>
+
+<footer>
+  © 2026 <b>Undangan Balanglompo</b> · Bagian dari keluarga <a href="https://balanglompo.com" style="color:var(--gold-soft)">balanglompo.com</a><br>
+  <span class="love">Dibuat dengan ❤️ di Pangkep</span>
+</footer>
+
+</body>
+</html>
