@@ -1496,9 +1496,9 @@ function startSequentialPreload(){
   list.push("opening-ayat.webp");                                    // opening
   if (CONFIG.bride && CONFIG.bride.photo) list.push(CONFIG.bride.photo);
   if (CONFIG.groom && CONFIG.groom.photo) list.push(CONFIG.groom.photo);
-  list.push("bg/segmen.webp", "bg/segmen-video.mp4");               // background bersama semua segmen
+  // background semua segmen & penutup — ikut CONFIG.backgrounds agar tak memuat berkas yang tidak dipakai
+  Object.values(CONFIG.backgrounds || {}).forEach(b => { if (b && b.src) list.push(b.src); if (b && b.video) list.push(b.video); });
   (CONFIG.gallery || []).slice(0, 6).forEach(g => list.push("thumb/" + g)); // thumbnail galeri pertama (ringan)
-  list.push("bg/penutup.mp4");                                       // closing
   preloadInOrder(list);
 }
 

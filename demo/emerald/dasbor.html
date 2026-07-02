@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="favicon.png" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dasbor Undangan — Ani &amp; Budi</title>
 <style>
@@ -145,6 +146,50 @@
   // URL Web App Apps Script (sama dengan undangan, scanner & kelola tamu)
   const SHEET_URL = "";
 
+  /* ---- MODE DEMO ----------------------------------------------------
+     SHEET_URL kosong = katalog demo: tampilkan data contoh agar calon
+     pemesan bisa melihat bentuk dasbor. Pada undangan asli (SHEET_URL
+     terisi) blok ini tidak terpakai sama sekali. */
+  const DEMO = !SHEET_URL;
+  const DEMO_TAMU = [
+    // [nama, dibuka n×, rsvp, pax, checkin, ucapan]
+    ["Bapak Ahmad Fauzi",           2, "Hadir", 2, 1, "Barakallahu lakuma, selamat menempuh hidup baru!"],
+    ["Ibu Sri Wahyuni",             1, "Hadir", 3, 1, "Semoga menjadi keluarga sakinah mawaddah warahmah."],
+    ["Keluarga H. Baso Dg. Situju", 1, "Hadir", 4, 1, ""],
+    ["Bapak Muh. Akbar & Keluarga", 3, "Hadir", 2, 1, "Selamat! Lancar sampai hari H ya."],
+    ["Ibu Hj. Nurlina",             1, "Hadir", 1, 1, ""],
+    ["Andi Rahmat",                 2, "Hadir", 2, 1, "Turut berbahagia, sampai jumpa di resepsi 🎉"],
+    ["Keluarga Bapak Sofyan",       1, "Hadir", 3, 1, ""],
+    ["Ibu Ratna Dewi",              1, "Hadir", 2, 1, "Doa terbaik untuk kalian berdua."],
+    ["Bapak Drs. Hasanuddin",       2, "Hadir", 2, 0, ""],
+    ["Sitti Aminah",                1, "Hadir", 1, 0, "Selamat menempuh hidup baru 🤲"],
+    ["Bapak Karim & Ibu",           1, "Tidak Hadir", 0, 0, "Mohon maaf belum bisa hadir, doa kami menyertai."],
+    ["Keluarga Ibu Marwah",         1, "Tidak Hadir", 0, 0, ""],
+    ["Muh. Ilham Saputra",          2, "Tidak Hadir", 0, 0, ""],
+    ["Ibu Fitriani",                1, "", 0, 0, ""],
+    ["Bapak H. Sallatu",            1, "", 0, 0, ""],
+    ["Nurul Hikmah",                0, "", 0, 0, ""],
+    ["Bapak Jamaluddin",            0, "", 0, 0, ""],
+    ["Ibu Rosmini & Keluarga",      0, "", 0, 0, ""],
+    ["Ikbal Ramadhan",              0, "", 0, 0, ""],
+    ["Keluarga Bapak Syamsul",      0, "", 0, 0, ""]
+  ];
+  const DEMO_LUAR = [
+    ["Teman KKN Ani", "Hadir", 2, "Ikut bahagia! Titip salam buat pengantin 😍"],
+    ["Alumni SMA 5 Makassar", "Hadir", 1, ""]
+  ];
+  function demoData(){
+    const now = Date.now(), H = 3600e3;
+    const tamu = DEMO_TAMU.map(r => ({ name: r[0] }));
+    const rsvp = [];
+    DEMO_TAMU.forEach((r, i) => { if (r[2]) rsvp.push({ name: r[0], attend: r[2], guests: r[3] || "", msg: r[5] || "", t: now - (i + 2) * 5 * H }); });
+    DEMO_LUAR.forEach((r, i) => rsvp.push({ name: r[0], attend: r[1], guests: r[2], msg: r[3] || "", t: now - (i + 1) * 7 * H }));
+    rsvp.sort((a, b) => b.t - a.t);   // server asli mengirim terbaru dulu
+    const checkin = DEMO_TAMU.filter(r => r[4]).map((r, i) => ({ name: r[0], t: now - (i + 1) * 7 * 6e4 }));
+    const dibuka = DEMO_TAMU.filter(r => r[1]).map(r => ({ name: r[0], n: r[1] }));
+    return { tamu, rsvp, checkin, dibuka };
+  }
+
   const $ = s => document.querySelector(s);
   let guests = [], rsvpAll = [], rsvpMap = {}, checkinList = [], checkinSet = new Set();
   let dibukaMap = new Map(), openMode = false;   // openMode = backend baru (endpoint rekap) aktif
@@ -168,6 +213,12 @@
   }
 
   function loadAll(){
+    if (DEMO) {   // katalog demo — tanpa jaringan
+      const d = demoData();
+      applyData(d.tamu, d.rsvp, d.checkin, d.dibuka);
+      $("#updated").textContent = "Mode demo — data contoh";
+      return;
+    }
     $("#updated").textContent = "Memuat…";
     // Coba endpoint rekap (backend baru): semua data dalam SATU panggilan,
     // termasuk data "dibuka". Backend lama membalas type tak dikenal dengan
@@ -319,6 +370,14 @@
     a.href = URL.createObjectURL(new Blob([csv], { type:"text/csv;charset=utf-8;" }));
     a.download = "rekap-undangan.csv"; a.click();
   });
+
+  if (DEMO) {
+    const b = document.createElement("div");
+    b.style.cssText = "background:#fff8e1;border:1px solid #ffe082;color:#8a6d1a;border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:14px";
+    b.innerHTML = "<b>Mode demo</b> — semua angka di halaman ini data contoh. Pada undangan asli, dasbor terhubung ke Google Sheet Anda dan diperbarui otomatis.";
+    document.body.insertBefore(b, document.querySelector(".toolbar"));
+    document.querySelector(".note").textContent = "Contoh dasbor untuk calon pemesan — pada undangan asli, data tamu, RSVP & check-in acara Anda tampil di sini secara real-time.";
+  }
 
   loadAll();
   setInterval(loadAll, 30000);

@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="favicon.png" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Kelola Daftar Tamu — Ani &amp; Budi</title>
 <style>
@@ -75,6 +76,38 @@
 <script>
   // URL Web App Apps Script (sama dengan undangan & scanner)
   const SHEET_URL = "";
+
+  /* ---- MODE DEMO ----------------------------------------------------
+     SHEET_URL kosong = katalog demo: tampilkan daftar tamu contoh;
+     tambah/hapus hanya terjadi di halaman ini (tanpa Google Sheet).
+     Pada undangan asli (SHEET_URL terisi) blok ini tidak terpakai. */
+  const DEMO = !SHEET_URL;
+  const DEMO_TAMU = [
+    // [nama, no wa, petugas, rsvp]
+    ["Bapak Ahmad Fauzi",           "0812xxxx7001", "Rahmat", "Hadir"],
+    ["Ibu Sri Wahyuni",             "0812xxxx7002", "Rahmat", "Hadir"],
+    ["Keluarga H. Baso Dg. Situju", "0812xxxx7003", "Lisa",   "Hadir"],
+    ["Bapak Muh. Akbar & Keluarga", "0812xxxx7004", "Lisa",   "Hadir"],
+    ["Ibu Hj. Nurlina",             "",             "Rahmat", "Hadir"],
+    ["Andi Rahmat",                 "0812xxxx7006", "Lisa",   "Hadir"],
+    ["Keluarga Bapak Sofyan",       "0812xxxx7007", "Rahmat", "Hadir"],
+    ["Ibu Ratna Dewi",              "0812xxxx7008", "Lisa",   "Hadir"],
+    ["Bapak Drs. Hasanuddin",       "0812xxxx7009", "Rahmat", "Hadir"],
+    ["Sitti Aminah",                "",             "Lisa",   "Hadir"],
+    ["Bapak Karim & Ibu",           "0812xxxx7011", "Rahmat", "Tidak Hadir"],
+    ["Keluarga Ibu Marwah",         "0812xxxx7012", "Lisa",   "Tidak Hadir"],
+    ["Muh. Ilham Saputra",          "0812xxxx7013", "Rahmat", "Tidak Hadir"],
+    ["Ibu Fitriani",                "0812xxxx7014", "Lisa",   ""],
+    ["Bapak H. Sallatu",            "",             "Rahmat", ""],
+    ["Nurul Hikmah",                "0812xxxx7016", "Lisa",   ""],
+    ["Bapak Jamaluddin",            "0812xxxx7017", "Rahmat", ""],
+    ["Ibu Rosmini & Keluarga",      "0812xxxx7018", "Lisa",   ""],
+    ["Ikbal Ramadhan",              "0812xxxx7019", "Rahmat", ""],
+    ["Keluarga Bapak Syamsul",      "0812xxxx7020", "Lisa",   ""]
+  ];
+  function demoLink(name){
+    return location.href.replace(/kelola-tamu\.html.*$/, "") + "?to=" + encodeURIComponent(name);
+  }
 
   const $ = s => document.querySelector(s);
   let guests = [];
@@ -155,6 +188,12 @@
     tb.querySelectorAll(".btn-del[data-del]").forEach(b => b.addEventListener("click", () => {
       const g = rows[+b.dataset.del];
       if (!g) return;
+      if (DEMO) {   // hapus lokal saja
+        if (!confirm(`Hapus tamu "${g.name}" dari daftar?`)) return;
+        guests.splice(guests.indexOf(g), 1);
+        render();
+        return;
+      }
       if (!g.row) { alert("Fitur hapus butuh backend versi baru.\nDeploy ulang Apps Script (New version), lalu muat ulang halaman ini."); return; }
       if (!confirm(`Hapus tamu "${g.name}" dari daftar?\nTindakan ini tidak bisa dibatalkan.`)) return;
       b.disabled = true; b.textContent = "⏳";
@@ -170,6 +209,13 @@
   }
 
   function loadGuests() {
+    if (DEMO) {   // katalog demo — tanpa jaringan
+      guests = DEMO_TAMU.map((r, i) => ({ row: i + 2, name: r[0], phone: r[1], pic: r[2], link: demoLink(r[0]) }));
+      rsvpMap = {};
+      DEMO_TAMU.forEach(r => { if (r[3]) rsvpMap[r[0].trim().toLowerCase()] = r[3]; });
+      render();
+      return;
+    }
     $("#tbl tbody").innerHTML = '<tr><td colspan="5" class="muted">Memuat…</td></tr>';
     Promise.all([
       fetch(SHEET_URL + "?type=tamu").then(r => r.json()).catch(() => ({ list: [] })),
@@ -189,6 +235,15 @@
     if (!name) { $("#msg").textContent = "Nama wajib diisi."; return; }
     const payload = { type:"tamu", name, phone: $("#i-phone").value.trim(), pic: $("#i-pic").value.trim() };
     const btn = $("#btn-add"); btn.disabled = true; $("#msg").textContent = "Menyimpan…";
+    if (DEMO) {   // tambah lokal saja
+      guests.unshift({ row: -1, name: name, phone: payload.phone, pic: payload.pic, link: demoLink(name) });
+      $("#i-name").value = $("#i-phone").value = "";
+      $("#msg").textContent = "✓ Tersimpan (demo — hanya di halaman ini)";
+      btn.disabled = false;
+      setTimeout(() => { $("#msg").textContent = ""; }, 1800);
+      render();
+      return;
+    }
     // no-cors: Apps Script membalas redirect tanpa header CORS sehingga respons
     // tak bisa dibaca browser. Mode ini membuat promise tetap resolve setelah
     // data terkirim (write pasti jalan), lalu kita muat ulang untuk konfirmasi.
@@ -201,6 +256,10 @@
       .catch(() => { $("#msg").textContent = "Gagal — cek koneksi."; })
       .finally(() => { btn.disabled = false; });
   });
+
+  if (DEMO) {
+    $(".sub").innerHTML = "<b>Mode demo</b> — daftar contoh; tambah/hapus hanya tersimpan di halaman ini. Pada undangan asli, daftar ini terhubung ke Google Sheet <b>DaftarTamu</b> dan bisa dikerjakan beberapa petugas sekaligus.";
+  }
 
   $("#search").addEventListener("input", render);
   $("#btn-refresh").addEventListener("click", loadGuests);
