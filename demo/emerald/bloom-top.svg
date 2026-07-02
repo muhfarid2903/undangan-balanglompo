@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 280" width="380" height="280">
+  <defs>
+    <ellipse id="lobet" cx="0" cy="-40" rx="11.5" ry="40"/>
+    <g id="fant">
+      <use href="#lobet" transform="rotate(-64)"/>
+      <use href="#lobet" transform="rotate(-32)"/>
+      <use href="#lobet" transform="rotate(0)"/>
+      <use href="#lobet" transform="rotate(32)"/>
+      <use href="#lobet" transform="rotate(64)"/>
+    </g>
+    <ellipse id="lft" cx="0" cy="14" rx="3.2" ry="14"/>
+    <g id="palmt">
+      <path d="M0 0 Q 44 34 104 42" fill="none" stroke-width="2.2"/>
+      <use href="#lft" transform="translate(18 12) rotate(38)"/>
+      <use href="#lft" transform="translate(34 20) rotate(34)"/>
+      <use href="#lft" transform="translate(52 27) rotate(30)"/>
+      <use href="#lft" transform="translate(70 33) rotate(26)"/>
+      <use href="#lft" transform="translate(88 38) rotate(22)"/>
+      <use href="#lft" transform="translate(22 8) rotate(-135) scale(0.9)"/>
+      <use href="#lft" transform="translate(40 16) rotate(-139) scale(0.9)"/>
+      <use href="#lft" transform="translate(58 23) rotate(-143) scale(0.9)"/>
+      <use href="#lft" transform="translate(76 29) rotate(-147) scale(0.9)"/>
+    </g>
+  </defs>
+
+  <!-- daun kipas menggantung -->
+  <g transform="translate(58 26) rotate(180)">
+    <use href="#fant" fill="#41705a" opacity="0.82"/>
+  </g>
+  <path d="M58 0 L58 30" stroke="#2e523c" stroke-width="2.6" stroke-linecap="round" opacity="0.78"/>
+
+  <g transform="translate(136 14) rotate(196) scale(0.6)">
+    <use href="#fant" fill="#6f9d80" opacity="0.72"/>
+  </g>
+  <path d="M136 0 L136 16" stroke="#3f6b4f" stroke-width="2.2" stroke-linecap="round" opacity="0.68"/>
+
+  <!-- pelepah menjuntai -->
+  <g transform="translate(88 4)" stroke="#5d8a6a" fill="#5d8a6a" opacity="0.7">
+    <use href="#palmt"/>
+  </g>
+  <g transform="translate(168 0) rotate(12) scale(0.74)" stroke="#8fb89d" fill="#8fb89d" opacity="0.62">
+    <use href="#palmt"/>
+  </g>
+
+  <!-- bunga kamboja aksen -->
+  <g fill="#f0d6a8" opacity="0.9">
+    <ellipse cx="120" cy="78" rx="6.2" ry="10.5" transform="rotate(-18 120 78)"/>
+    <ellipse cx="130" cy="84" rx="6.2" ry="10.5" transform="rotate(26 130 84)"/>
+    <ellipse cx="124" cy="92" rx="6" ry="10" transform="rotate(4 124 92)"/>
+  </g>
+  <circle cx="125" cy="85" r="4.4" fill="#c6ad77"/>
+
+  <!-- serbuk emas -->
+  <g stroke="#c6ad77" stroke-width="1.2" fill="#c6ad77" opacity="0.82">
+    <path d="M226 8 q 14 26 2 52" fill="none"/>
+    <circle cx="226" cy="62" r="2.4"/><circle cx="232" cy="40" r="2"/><circle cx="230" cy="18" r="1.8"/>
+    <circle cx="186" cy="92" r="2"/>
+  </g>
+</svg>
