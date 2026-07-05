@@ -83,6 +83,17 @@
           display: flex; flex-direction: column; position: relative; }
   .tema.baru::before { content: "Baru"; position: absolute; top: -10px; right: 14px;
         background: var(--gold); color: #fff; font-size: 11px; letter-spacing: 1px; padding: 2px 12px; border-radius: 20px; }
+  /* kartu MODEL kedua: tampil beda (hijau-emas walasuji), selebar grid */
+  .tema.model2 { grid-column: 1 / -1; background: linear-gradient(150deg, #1f4d3c, #153429 70%); border: 1px solid #c9a24b; }
+  .tema.model2::before { content: "Model Baru — Bentuk Berbeda"; position: absolute; top: -10px; left: 14px; right: auto;
+        background: #b98a2f; color: #fff; font-size: 11px; letter-spacing: 1px; padding: 2px 12px; border-radius: 20px; }
+  .tema.model2 h3 { color: #f6efdb; }
+  .tema.model2 p { color: #d8cfae; }
+  .tema.model2 .meta { color: #e2c77b; }
+  .tema.model2 .btn { background: linear-gradient(120deg, var(--gold), var(--gold-soft)); color: #4a3320; }
+  .tema-label { grid-column: 1 / -1; font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase;
+        color: var(--muted); margin: 10px 0 -4px; display: flex; align-items: center; gap: 12px; }
+  .tema-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .tema .swatch { display: flex; gap: 6px; margin-bottom: 12px; }
   .tema .swatch i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); }
   .tema h3 { font-size: 16.5px; color: var(--deep); }
@@ -142,10 +153,22 @@
 
 <section id="tema">
   <div class="wrap">
-    <h2 class="sec-title">Pilih Tema Favorit Anda</h2>
-    <p class="sec-sub">Delapan tema siap pakai — tiap demo memamerkan satu paduan warna, font, ornamen &amp; animasi.
+    <h2 class="sec-title">Pilih Model &amp; Tema Favorit Anda</h2>
+    <p class="sec-sub">Dua <b>model</b> dengan bentuk undangan yang benar-benar berbeda — isi &amp; fiturnya sama lengkap.
+       Model Klasik hadir dalam delapan paduan warna; Model Walasuji tampil dengan tata letak khas tersendiri.
        Di dalam demo ada tombol <b>ubah warna &amp; font langsung</b>, silakan coba-coba. Saat memesan, semuanya bebas dikombinasikan.</p>
     <div class="tema-grid">
+      <div class="tema-label">Model Walasuji — Sentuhan Bugis-Makassar</div>
+      <div class="tema model2">
+        <div class="swatch"><i style="background:#f7f2e5"></i><i style="background:#e2c77b"></i><i style="background:#b98a2f"></i><i style="background:#1f4d3c"></i><i style="background:#153429"></i></div>
+        <h3>Walasuji Heritage</h3>
+        <p>Bentuk yang sama sekali lain: gerbang dua daun pintu bermotif tenun yang terbuka menyambut tamu,
+           bingkai foto segi delapan, judul serif berwibawa, kartu balasan bergaya surat pos, kolase galeri editorial,
+           dan kisi walasuji — simbol pagar bambu pengantin Bugis-Makassar. Hijau zamrud berpadu emas.</p>
+        <div class="meta">Tata Letak Editorial · Ornamen Walasuji · Serbuk Emas</div>
+        <a class="btn" href="demo/walasuji/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+      <div class="tema-label">Model Klasik — Romantis Floral, 8 Paduan Warna</div>
       <div class="tema baru">
         <div class="swatch"><i style="background:#f6f4f9"></i><i style="background:#9183ab"></i><i style="background:#54466e"></i><i style="background:#3e3454"></i><i style="background:#a98fc0"></i></div>
         <h3>Wisteria Lavender</h3><p>Ungu wisteria yang anggun dan kekinian.</p>

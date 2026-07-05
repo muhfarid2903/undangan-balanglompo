@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="favicon.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Check-In Tamu — Scanner</title>
+<style>
+  :root { --gold:#b89b6e; --ink:#3f3933; --green:#2e7d32; --red:#c0392b; --line:#e4d9c8; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin:0; background:#faf6f0;
+         color:var(--ink); padding:16px; max-width:480px; margin:0 auto; }
+  h1 { font-size:18px; text-align:center; margin:6px 0 2px; }
+  .sub { text-align:center; color:#8a7d70; font-size:13px; margin-bottom:14px; }
+  #reader { width:100%; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:#000; }
+  .status { margin-top:14px; padding:16px; border-radius:14px; text-align:center; font-size:15px;
+            background:#fff; border:1px solid var(--line); min-height:64px; }
+  .status.ok { background:#e8f5e9; border-color:#a5d6a7; color:var(--green); }
+  .status.dup { background:#fff8e1; border-color:#ffe082; color:#b8860b; }
+  .status.err { background:#fdecea; border-color:#f5b7b1; color:var(--red); }
+  .status .big { font-size:20px; font-weight:700; display:block; margin-top:4px; }
+  .counter { text-align:center; margin-top:12px; font-size:14px; color:#8a7d70; }
+  .counter b { color:var(--gold); font-size:22px; }
+  .log { margin-top:14px; }
+  .log h3 { font-size:13px; color:#8a7d70; text-transform:uppercase; letter-spacing:.5px; margin:0 0 6px; }
+  .log-item { background:#fff; border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+              margin-bottom:6px; font-size:14px; display:flex; justify-content:space-between; }
+  .log-item small { color:#8a7d70; }
+  .note { font-size:12px; color:#8a7d70; text-align:center; margin-top:18px; line-height:1.5; }
+</style>
+</head>
+<body>
+  <h1>Check-In Tamu</h1>
+  <div class="sub">Arahkan kamera ke QR code pada undangan tamu</div>
+
+  <div id="reader"></div>
+  <div class="status" id="status">Menyiapkan kamera…</div>
+  <div class="counter">Total hadir: <b id="count">0</b></div>
+
+  <div class="log">
+    <h3>Baru saja check-in</h3>
+    <div id="log"></div>
+  </div>
+
+  <div class="note">
+    Halaman ini untuk panitia/penerima tamu. Data tersimpan otomatis ke Google Sheet
+    (tab <b>CheckIn</b>). Pastikan koneksi internet aktif.
+  </div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+  // URL Web App Apps Script (sama dengan yang di undangan)
+  const SHEET_URL = "";
+
+  /* ---- MODE DEMO ----------------------------------------------------
+     SHEET_URL kosong = katalog demo: check-in disimpan di perangkat ini
+     (localStorage) + ada tombol simulasi scan, supaya calon pemesan bisa
+     merasakan alurnya tanpa Google Sheet. Pada undangan asli (SHEET_URL
+     terisi) blok ini tidak terpakai sama sekali. */
+  const DEMO = !SHEET_URL;
+  const DEMO_KEY = "demo_checkin";
+  const DEMO_POOL = ["Bapak Ahmad Fauzi","Ibu Sri Wahyuni","Keluarga H. Baso Dg. Situju","Bapak Muh. Akbar & Keluarga","Ibu Hj. Nurlina","Andi Rahmat","Keluarga Bapak Sofyan","Ibu Ratna Dewi","Bapak Drs. Hasanuddin","Sitti Aminah"];
+  function demoGet(){
+    try { const v = JSON.parse(localStorage.getItem(DEMO_KEY)); if (Array.isArray(v)) return v; } catch(e){}
+    const now = Date.now();
+    return [
+      { id:"3", name: DEMO_POOL[2], t: now -  4*6e4 },
+      { id:"2", name: DEMO_POOL[1], t: now -  9*6e4 },
+      { id:"1", name: DEMO_POOL[0], t: now - 15*6e4 }
+    ];
+  }
+  function demoSave(list){ try { localStorage.setItem(DEMO_KEY, JSON.stringify(list.slice(0, 50))); } catch(e){} }
+
+  const statusEl = document.getElementById("status");
+  const countEl = document.getElementById("count");
+  const logEl = document.getElementById("log");
+  let busy = false;
+  let lastText = "";
+  let lastTime = 0;
+
+  function setStatus(cls, html) { statusEl.className = "status " + cls; statusEl.innerHTML = html; }
+
+  function logRow(x) {
+    const t = new Date(x.t);
+    const jam = isNaN(t) ? "" : t.toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
+    return `<div class="log-item"><span>${esc(x.name)}</span><small>${jam}</small></div>`;
+  }
+  function refreshCount() {
+    if (DEMO) {
+      const list = demoGet();
+      countEl.textContent = list.length;
+      logEl.innerHTML = list.slice(0, 8).map(logRow).join("");
+      return;
+    }
+    fetch(SHEET_URL + "?type=checkin")
+      .then(r => r.json())
+      .then(d => {
+        countEl.textContent = d.count || 0;
+        logEl.innerHTML = (d.list || []).slice(0, 8).map(logRow).join("");
+      }).catch(()=>{});
+  }
+  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function onScan(decodedText) {
+    const now = Date.now();
+    // hindari scan ganda QR yang sama dalam 3 detik
+    if (busy || (decodedText === lastText && now - lastTime < 3000)) return;
+    lastText = decodedText; lastTime = now; busy = true;
+
+    // Format QR baru: "CHECKIN:ID:<id>|<nama>" — ID unik per tamu (kolom ID
+    // Check-in di Sheet), duplikat dicek per ID sehingga dua tamu bernama sama
+    // tidak bentrok. Format lama "CHECKIN:<nama>" tetap didukung (per nama).
+    let raw = decodedText.trim();
+    if (raw.indexOf("CHECKIN:") === 0) raw = raw.slice(8).trim();
+    let id = "", name = raw;
+    if (raw.indexOf("ID:") === 0) {
+      const rest = raw.slice(3), sep = rest.indexOf("|");
+      id = (sep === -1 ? rest : rest.slice(0, sep)).trim();
+      name = (sep === -1 ? "" : rest.slice(sep + 1)).trim();
+    }
+    if (!id && !name) { busy = false; return; }
+    const label = name || ("ID " + id);
+
+    if (DEMO) {   // katalog demo — simpan di perangkat, tanpa jaringan
+      const list = demoGet();
+      const already = id
+        ? list.some(x => String(x.id || "").trim() === id)
+        : list.some(x => String(x.name || "").trim().toLowerCase() === name.toLowerCase());
+      if (already) { setStatus("dup", `Sudah pernah check-in<span class="big">${esc(label)}</span>`); }
+      else {
+        list.unshift({ id: id, name: name, t: Date.now() });
+        demoSave(list);
+        setStatus("ok", `✓ Selamat datang<span class="big">${esc(label)}</span>`);
+        refreshCount();
+      }
+      setTimeout(() => { busy = false; }, 1200);
+      return;
+    }
+
+    setStatus("", "Memproses…");
+    // GET bisa dibaca lintas-asal → dipakai untuk deteksi "sudah pernah check-in".
+    // POST simpan pakai no-cors (respons Apps Script tak terbaca browser, tapi
+    // datanya tetap tersimpan; server juga menolak duplikat — per ID bila ada).
+    fetch(SHEET_URL + "?type=checkin")
+      .then(r => r.json())
+      .then(d => {
+        const list = (d && d.list) || [];
+        const already = id
+          ? list.some(x => String(x.id || "").trim() === id)
+          : list.some(x => String(x.name || "").trim().toLowerCase() === name.toLowerCase());
+        if (already) { setStatus("dup", `Sudah pernah check-in<span class="big">${esc(label)}</span>`); return; }
+        return fetch(SHEET_URL, { method:"POST", mode:"no-cors", body: JSON.stringify({ type:"checkin", id: id, name: name }) })
+          .then(() => { setStatus("ok", `✓ Selamat datang<span class="big">${esc(label)}</span>`); refreshCount(); });
+      })
+      .catch(() => setStatus("err", "Gagal — cek koneksi internet, lalu scan ulang."))
+      .finally(() => setTimeout(() => { busy = false; }, 1200));
+  }
+
+  function startScanner() {
+    const scanner = new Html5Qrcode("reader");
+    Html5Qrcode.getCameras().then(cams => {
+      const back = cams.find(c => /back|belakang|rear|environment/i.test(c.label)) || cams[cams.length - 1];
+      scanner.start(
+        back ? back.id : { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        onScan,
+        () => {}
+      ).then(() => setStatus("", "Siap memindai…"))
+       .catch(err => setStatus("err", "Tidak bisa membuka kamera: " + err));
+    }).catch(err => setStatus("err", "Kamera tidak terdeteksi: " + err));
+  }
+
+  if (DEMO) {
+    // Jangan langsung minta izin kamera di halaman katalog — sediakan tombol.
+    document.querySelector(".sub").textContent = "Mode demo — tekan tombol simulasi di bawah untuk merasakan alur check-in.";
+    setStatus("", "Menunggu simulasi scan…");
+    const sim = document.createElement("button");
+    sim.textContent = "▶ Simulasi scan QR tamu";
+    sim.style.cssText = "display:block;width:100%;margin-top:10px;padding:13px;border:none;border-radius:12px;background:var(--gold);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit";
+    sim.addEventListener("click", () => {
+      const list = demoGet();
+      const belum = DEMO_POOL.map((n, i) => ({ id: String(i + 1), name: n }))
+        .filter(g => !list.some(x => String(x.id || "").trim() === g.id));
+      if (!belum.length) { setStatus("dup", 'Semua tamu contoh sudah check-in.<span class="big">Hapus data demo di bawah untuk mengulang</span>'); return; }
+      const g = belum[Math.floor(Math.random() * belum.length)];
+      onScan("CHECKIN:ID:" + g.id + "|" + g.name);
+    });
+    const cam = document.createElement("button");
+    cam.textContent = "📷 Atau nyalakan kamera scanner";
+    cam.style.cssText = "display:block;width:100%;margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-size:13px;cursor:pointer;font-family:inherit";
+    cam.addEventListener("click", () => { cam.remove(); startScanner(); });
+    const reset = document.createElement("button");
+    reset.textContent = "Hapus data demo";
+    reset.style.cssText = "display:block;margin:14px auto 0;padding:7px 14px;border:none;border-radius:8px;background:#efe7d8;color:#8a7d70;font-size:12px;cursor:pointer;font-family:inherit";
+    reset.addEventListener("click", () => { localStorage.removeItem(DEMO_KEY); refreshCount(); setStatus("", "Data demo dikosongkan — silakan simulasi lagi."); });
+    const anchor = document.getElementById("reader");
+    anchor.after(cam); anchor.after(sim);
+    document.querySelector(".log").after(reset);
+    document.querySelector(".note").innerHTML = "Mode demo — check-in hanya tersimpan di perangkat ini. Pada acara asli, setiap tamu punya QR unik di undangannya; panitia tinggal scan dan kehadiran langsung tercatat ke Google Sheet (tab <b>CheckIn</b>).";
+  } else {
+    startScanner();
+  }
+
+  refreshCount();
+  setInterval(refreshCount, 15000);
+</script>
+</body>
+</html>
