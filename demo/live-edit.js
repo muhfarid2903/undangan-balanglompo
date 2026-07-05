@@ -38,13 +38,27 @@
     return "serif";
   }
 
-  /* ---- TIPOGRAFI: kontrol per-elemen (label, selektor, deskripsi) ---- */
+  /* ---- TIPOGRAFI: kontrol per-elemen (label, selektor, deskripsi) ----
+     Tiap kategori memetakan SATU peran teks saja, berlaku di semua model:
+     - Judul Utama   : judul section & judul kartu/popup (bukan nama mempelai)
+     - Nama Panggilan: nama panggilan mempelai di mana pun tampil
+                       (loader, cover, gerbang, intro, penutup, tanda "&")
+     - Nama Lengkap  : nama lengkap mempelai (kartu mempelai + slide intro)
+     - Teks Body     : SEMUA teks lain tanpa terkecuali (selektor khusus "rest":
+                       disapu otomatis dari seluruh halaman dikurangi 3 kategori
+                       bernama di atas — label, tombol, angka, tanggal, form, nav) */
   var TYPO_ITEMS = [
-    ["Judul Utama",   ".names, .sec-title",          "Nama mempelai & judul section"],
-    ["Nama Panggilan","#couple .name",               "Nama panggilan mempelai"],
-    ["Nama Lengkap",  ".full",                       "Nama lengkap mempelai"],
-    ["Teks Body",     ".couple-intro, .ayat, .sub",  "Paragraf & teks isi"]
+    ["Judul Utama",   ".sec-title, .event-card h3, .popup-title",
+                      "Judul section: Bride & Groom, Detail Acara, dll."],
+    ["Nama Panggilan",".names, .loader-script, .g-names, .i-big, #couple .name, #couple2 .name, .amp, .amp b",
+                      "Nama panggilan mempelai: cover, pembuka & penutup"],
+    ["Nama Lengkap",  ".full, .intro-slide .i-name",
+                      "Nama lengkap mempelai: kartu mempelai & intro"],
+    ["Teks Body",     "rest",
+                      "Semua teks lain di luar tiga kategori di atas"]
   ];
+  /* gabungan selektor 3 kategori bernama — dipakai "rest" sebagai pengecualian */
+  var NAMED_SEL = TYPO_ITEMS.slice(0, 3).map(function(i){ return i[1]; }).join(", ");
 
   /* ---- WARNA: peran bernama ramah (var, label, deskripsi) ---- */
   var COLORS = [
@@ -242,9 +256,33 @@
      ============================================================ */
   var paneFont = document.getElementById("le-font");
 
+  // elemen punya teks langsung (bukan cuma dari anak-anaknya)?
+  function hasOwnText(el){
+    for (var n = el.firstChild; n; n = n.nextSibling)
+      if (n.nodeType === 3 && n.nodeValue.trim()) return true;
+    return false;
+  }
+  var SKIP_TAG = { SCRIPT:1, STYLE:1, NOSCRIPT:1, TITLE:1, TEMPLATE:1 };
+  // "rest": semua elemen bertekst di halaman DI LUAR 3 kategori bernama & UI panel ini
+  function restEls(){
+    var out = [], all = document.body.getElementsByTagName("*");
+    for (var i = 0; i < all.length; i++){
+      var el = all[i];
+      if (SKIP_TAG[el.tagName]) continue;
+      if (el.closest(".le-panel,.le-fab")) continue;
+      if (el.closest(NAMED_SEL)) continue;      // milik Judul/Panggilan/Lengkap (atau di dalamnya)
+      if (!hasOwnText(el)) continue;
+      out.push(el);
+    }
+    return out;
+  }
+
   TYPO_ITEMS.forEach(function(item){
     var label=item[0], sel=item[1], desc=item[2];
-    var els = APP.querySelectorAll(sel);
+    // kategori bernama dicari di seluruh dokumen (popup ada di luar .app)
+    var els = (sel === "rest") ? restEls()
+            : Array.prototype.filter.call(document.body.querySelectorAll(sel),
+                function(el){ return !el.closest(".le-panel,.le-fab"); });
     if(!els.length) return;                                  // lewati kalau tema ini tak punya elemennya
 
     // tangkap ukuran & font asli tiap elemen
