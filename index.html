@@ -83,16 +83,23 @@
           display: flex; flex-direction: column; position: relative; }
   .tema.baru::before { content: "Baru"; position: absolute; top: -10px; right: 14px;
         background: var(--gold); color: #fff; font-size: 11px; letter-spacing: 1px; padding: 2px 12px; border-radius: 20px; }
-  /* kartu MODEL kedua: tampil beda (hijau-emas walasuji), selebar grid */
-  .tema.model2 { grid-column: 1 / -1; background: linear-gradient(150deg, #1f4d3c, #153429 70%); border: 1px solid #c9a24b; }
-  .tema.model2::before { content: "Model Baru — Bentuk Berbeda"; position: absolute; top: -10px; left: 14px; right: auto;
-        background: #b98a2f; color: #fff; font-size: 11px; letter-spacing: 1px; padding: 2px 12px; border-radius: 20px; }
-  .tema.model2 h3 { color: #f6efdb; }
-  .tema.model2 p { color: #d8cfae; }
-  .tema.model2 .meta { color: #e2c77b; }
-  .tema.model2 .btn { background: linear-gradient(120deg, var(--gold), var(--gold-soft)); color: #4a3320; }
+  /* kartu MODEL bentuk-berbeda: latar & aksen mengikuti identitas tiap model */
+  .tema.bentuk { color: #fff; border: none; overflow: hidden; }
+  .tema.bentuk h3 { color: #fff; font-size: 18px; }
+  .tema.bentuk p { color: rgba(255,255,255,.84); }
+  .tema.bentuk .meta { color: rgba(255,255,255,.72); }
+  .tema.bentuk .btn { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.45);
+        color: #fff; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .tema.bentuk .no { position: absolute; top: 12px; right: 16px; font-family: var(--script);
+        font-size: 40px; line-height: 1; color: rgba(255,255,255,.28); }
+  .tema.bentuk .swatch i { border-color: rgba(255,255,255,.25); }
+  /* kartu unggulan Walasuji: selebar grid + badge */
+  .tema.unggulan { grid-column: 1 / -1; position: relative; }
+  .tema.unggulan::before { content: "Unggulan"; position: absolute; top: -10px; left: 16px; right: auto;
+        background: #e2c77b; color: #3a2a10; font-size: 11px; letter-spacing: 1px; padding: 2px 12px; border-radius: 20px; z-index: 2; }
   .tema-label { grid-column: 1 / -1; font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase;
-        color: var(--muted); margin: 10px 0 -4px; display: flex; align-items: center; gap: 12px; }
+        color: var(--muted); margin: 22px 0 -4px; display: flex; align-items: center; gap: 12px; }
+  .tema-label:first-child { margin-top: 4px; }
   .tema-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .tema .swatch { display: flex; gap: 6px; margin-bottom: 12px; }
   .tema .swatch i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); }
@@ -154,20 +161,114 @@
 <section id="tema">
   <div class="wrap">
     <h2 class="sec-title">Pilih Model &amp; Tema Favorit Anda</h2>
-    <p class="sec-sub">Dua <b>model</b> dengan bentuk undangan yang benar-benar berbeda — isi &amp; fiturnya sama lengkap.
-       Model Klasik hadir dalam delapan paduan warna; Model Walasuji tampil dengan tata letak khas tersendiri.
-       Di dalam demo ada tombol <b>ubah warna &amp; font langsung</b>, silakan coba-coba. Saat memesan, semuanya bebas dikombinasikan.</p>
+    <p class="sec-sub"><b>Sebelas model</b> dengan bentuk undangan yang benar-benar berbeda — dari gerbang tenun,
+       amplop segel lilin, tiket kapal, poster film, sampai album kenangan &amp; langit berbintang. Ditambah
+       <b>Model Klasik</b> dalam delapan paduan warna. Semua berisi segmen &amp; fitur yang sama lengkap (RSVP,
+       QR check-in, galeri, musik), dan di tiap demo ada tombol <b>ubah warna &amp; font langsung</b>.</p>
     <div class="tema-grid">
-      <div class="tema-label">Model Walasuji — Sentuhan Bugis-Makassar</div>
-      <div class="tema model2">
+      <div class="tema-label">11 Model — Tiap Model Bentuknya Berbeda</div>
+
+      <div class="tema bentuk unggulan" style="background:linear-gradient(150deg,#1f4d3c,#153429 72%)">
+        <span class="no">۞</span>
         <div class="swatch"><i style="background:#f7f2e5"></i><i style="background:#e2c77b"></i><i style="background:#b98a2f"></i><i style="background:#1f4d3c"></i><i style="background:#153429"></i></div>
         <h3>Walasuji Heritage</h3>
-        <p>Bentuk yang sama sekali lain: gerbang dua daun pintu bermotif tenun yang terbuka menyambut tamu,
-           bingkai foto segi delapan, judul serif berwibawa, kartu balasan bergaya surat pos, kolase galeri editorial,
-           dan kisi walasuji — simbol pagar bambu pengantin Bugis-Makassar. Hijau zamrud berpadu emas.</p>
+        <p>Sentuhan Bugis-Makassar: gerbang dua daun pintu bermotif tenun yang terbuka menyambut tamu,
+           bingkai foto segi delapan, kartu balasan bergaya surat pos, kolase galeri editorial, dan kisi
+           walasuji — simbol pagar bambu pengantin. Hijau zamrud berpadu emas.</p>
         <div class="meta">Tata Letak Editorial · Ornamen Walasuji · Serbuk Emas</div>
         <a class="btn" href="demo/walasuji/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
       </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#3a3a32,#23231e 74%)">
+        <span class="no">✦</span>
+        <div class="swatch"><i style="background:#fafaf8"></i><i style="background:#e8b9a3"></i><i style="background:#c96f4a"></i><i style="background:#33332c"></i><i style="background:#23231e"></i></div>
+        <h3>Teduh</h3>
+        <p>Minimalis modern serba lega: foto sampul penuh layar, kartu sapaan menggeser turun, galeri filmstrip yang digeser.</p>
+        <div class="meta">Font Fraunces · Kartu Slide · Terakota</div>
+        <a class="btn" href="demo/teduh/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#6b2331,#4a1a24 74%)">
+        <span class="no">❦</span>
+        <div class="swatch"><i style="background:#f5ecd7"></i><i style="background:#d5b877"></i><i style="background:#a8842c"></i><i style="background:#6b2331"></i><i style="background:#4a1a24"></i></div>
+        <h3>Keraton</h3>
+        <p>Vintage kerajaan: amplop segel lilin yang membuka 3 dimensi, potret oval bergaris ganda, kartu acara bergaya sertifikat.</p>
+        <div class="meta">Amplop Segel · Bingkai Ukir · Emas Antik</div>
+        <a class="btn" href="demo/keraton/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#2a2925,#141412 74%)">
+        <span class="no">§</span>
+        <div class="swatch"><i style="background:#f4f2ee"></i><i style="background:#e8938c"></i><i style="background:#c22f2f"></i><i style="background:#2a2925"></i><i style="background:#141412"></i></div>
+        <h3>Tajuk</h3>
+        <p>Sampul majalah: masthead raksasa yang membalik saat dibuka, daftar isi, profil mempelai editorial, galeri portofolio.</p>
+        <div class="meta">Font Playfair · Sampul Membalik · Berani</div>
+        <a class="btn" href="demo/tajuk/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#1d3d5e,#122840 74%)">
+        <span class="no">⚓</span>
+        <div class="swatch"><i style="background:#f3ead8"></i><i style="background:#e3cb95"></i><i style="background:#c9a35c"></i><i style="background:#2a7f8a"></i><i style="background:#122840"></i></div>
+        <h3>Pelayaran</h3>
+        <p>Tiket kapal: boarding pass yang disobek untuk masuk, jendela porthole, log kapten, kartu pos galeri, label bagasi.</p>
+        <div class="meta">Nautika · Boarding Pass · Kompas</div>
+        <a class="btn" href="demo/pelayaran/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#2a2531,#141118 74%)">
+        <span class="no">★</span>
+        <div class="swatch"><i style="background:#f2e9d8"></i><i style="background:#edc87e"></i><i style="background:#d9a441"></i><i style="background:#8e2434"></i><i style="background:#17151a"></i></div>
+        <h3>Sinema</h3>
+        <p>Poster film: tirai bioskop yang terbuka, pemeran utama &amp; kredit, sinopsis babak, tiket studio, strip film.</p>
+        <div class="meta">Font Bebas · Tirai Bioskop · Sinematik</div>
+        <a class="btn" href="demo/sinema/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#2a2721,#171512 74%)">
+        <span class="no">¶</span>
+        <div class="swatch"><i style="background:#f0ebe0"></i><i style="background:#d98b7f"></i><i style="background:#b33a2b"></i><i style="background:#2a2721"></i><i style="background:#171512"></i></div>
+        <h3>Koran</h3>
+        <p>Halaman satu surat kabar: masthead blackletter, headline besar, kupon RSVP gunting, foto ber-caption dok. keluarga.</p>
+        <div class="meta">Newsprint · Kupon Gunting · Klasik</div>
+        <a class="btn" href="demo/koran/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#182028,#0a0d10 74%)">
+        <span class="no">◈</span>
+        <div class="swatch"><i style="background:#f3ecda"></i><i style="background:#e8cd8a"></i><i style="background:#cfa54e"></i><i style="background:#14453a"></i><i style="background:#101418"></i></div>
+        <h3>Deko</h3>
+        <p>Art deco Gatsby: pembuka iris melingkar, kipas emas sunburst, menara countdown bertingkat, mozaik galeri.</p>
+        <div class="meta">Font Poiret · Iris Deco · Noir-Emas</div>
+        <a class="btn" href="demo/deko/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#5a6549,#46503c 74%)">
+        <span class="no">❧</span>
+        <div class="swatch"><i style="background:#fbf8f1"></i><i style="background:#d6bd8c"></i><i style="background:#b39257"></i><i style="background:#7d8f6d"></i><i style="background:#46503c"></i></div>
+        <h3>Flora</h3>
+        <p>Herbarium botani: lembar tisu spesimen yang terangkat, label tulisan tangan, paket benih doa untuk RSVP, plat spesimen.</p>
+        <div class="meta">Botani · Herbarium · Cat Air</div>
+        <a class="btn" href="demo/flora/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#5c5546,#4a4438 74%)">
+        <span class="no">✎</span>
+        <div class="swatch"><i style="background:#e9dcc3"></i><i style="background:#e8ab9a"></i><i style="background:#d4785f"></i><i style="background:#6b8e7f"></i><i style="background:#4a4438"></i></div>
+        <h3>Skrap</h3>
+        <p>Album kenangan: sampul album yang membuka, polaroid miring berselotip washi, catatan tempel countdown, jurnal harian.</p>
+        <div class="meta">Tulis Tangan · Polaroid · Personal</div>
+        <a class="btn" href="demo/skrap/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
+      <div class="tema bentuk" style="background:linear-gradient(150deg,#182142,#0e1630 74%)">
+        <span class="no">✧</span>
+        <div class="swatch"><i style="background:#e9e4d0"></i><i style="background:#e6cd8c"></i><i style="background:#c9a24b"></i><i style="background:#2c3e6b"></i><i style="background:#0e1630"></i></div>
+        <h3>Langit</h3>
+        <p>Malam berbintang: rasi bintang inisial mempelai, bulan sabit, countdown fase bulan, galeri lingkaran teropong.</p>
+        <div class="meta">Font Cinzel · Rasi Bintang · Fase Bulan</div>
+        <a class="btn" href="demo/langit/?to=Bapak%2FIbu%20Tamu" target="_blank" rel="noopener">Lihat Demo ↗</a>
+      </div>
+
       <div class="tema-label">Model Klasik — Romantis Floral, 8 Paduan Warna</div>
       <div class="tema baru">
         <div class="swatch"><i style="background:#f6f4f9"></i><i style="background:#9183ab"></i><i style="background:#54466e"></i><i style="background:#3e3454"></i><i style="background:#a98fc0"></i></div>
