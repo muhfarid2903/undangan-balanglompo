@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0.7" y2="1">
+    <stop offset="0" stop-color="#8f8674"/><stop offset="1" stop-color="#5c554a"/>
+  </linearGradient></defs>
+  <rect width="800" height="1100" fill="url(#g)"/>
+  <g transform="translate(400 480) scale(1.4)"><circle cx='0' cy='0' r='84' fill='none' stroke='#f2ede2' stroke-width='2.5' opacity='.4'/><circle cx='0' cy='0' r='60' fill='none' stroke='#f2ede2' stroke-width='1.5' opacity='.4'/></g>
+  <text x="400" y="520" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="44" fill="#f2ede2" opacity=".85">foto contoh</text>
+</svg>
