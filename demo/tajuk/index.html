@@ -655,7 +655,7 @@
       <div class="g-page">
         <div class="g-mast">Pernikahan</div>
         <div class="g-foto">
-          <img id="cover-photo" src="cover.svg" alt="Foto mempelai" onerror="this.onerror=null;this.src='cover.jpg'">
+          <img id="cover-photo" src="../_aset/p15.jpg" alt="Foto mempelai" onerror="this.onerror=null;this.src='cover.jpg'">
           <div class="g-barcode"><i></i></div>
           <div class="g-lines">
             <div class="g-edisi">Edisi Istimewa · Gratis</div>
@@ -908,7 +908,7 @@ const CONFIG = {
     "mother": "Ibu Siti Aminah",
     "childOrder": "Putra kedua",
     "ig": "budisantoso",
-    "photo": "foto-pria.svg"
+    "photo": "../_aset/p19.jpg"
   },
   "bride": {
     "nick": "Ani",
@@ -917,17 +917,17 @@ const CONFIG = {
     "mother": "Ibu Nurhayati",
     "childOrder": "Putri pertama",
     "ig": "anirahma",
-    "photo": "foto-wanita.svg"
+    "photo": "../_aset/p04.jpg"
   },
   "ayat": "“Dan di antara tanda-tanda kekuasaan-Nya diciptakan-Nya untukmu pasangan hidup dari jenismu sendiri supaya kamu mendapat ketenangan hati...”",
   "ayatRef": "QS. Ar-Rum: 21",
   "intro": [
-    { "type": "hero",   "note": "Sakinah, Mawaddah, wa Rahmah", "bg": "bgintro1.svg", "veil": 0.1 },
-    { "type": "ayat",   "bg": "bgintro2.svg", "white": true, "veil": 0.42 },
-    { "type": "photo",  "src": "galeri1.svg" },
-    { "type": "photo",  "src": "galeri3.svg" },
-    { "type": "couple", "bg": "bgintro5.svg", "white": true, "veil": 0.46 },
-    { "type": "hormat", "bg": "bgintro6.svg", "white": true, "veil": 0.5 }
+    { "type": "hero",   "note": "Sakinah, Mawaddah, wa Rahmah", "bg": "../_aset/p21.jpg", "veil": 0.1 },
+    { "type": "ayat",   "video": "../_aset/v4.mp4", "white": true, "veil": 0.42 },
+    { "type": "photo",  "src": "../_aset/p03.jpg" },
+    { "type": "photo",  "src": "../_aset/p18.jpg" },
+    { "type": "couple", "bg": "../_aset/p13.jpg", "white": true, "veil": 0.46 },
+    { "type": "hormat", "bg": "../_aset/p23.jpg", "white": true, "veil": 0.5 }
   ],
   "mainDate": "2026-09-12T10:00+08:00",
   "akad": {
@@ -950,12 +950,12 @@ const CONFIG = {
     { "year": "2026", "text": "Dengan restu kedua orang tua, melangkah ke jenjang pernikahan." }
   ],
   "gallery": [
-    "galeri1.svg",
-    "galeri2.svg",
-    "galeri3.svg",
-    "galeri4.svg",
-    "galeri5.svg",
-    "galeri6.svg"
+    "../_aset/p17.jpg",
+    "../_aset/p09.jpg",
+    "../_aset/p01.jpg",
+    "../_aset/p07.jpg",
+    "../_aset/p06.jpg",
+    "../_aset/p02.jpg"
   ],
   "gifts": [
     { "bank": "BANK BRI", "number": "1234567890", "holder": "a.n. Ani Rahmawati" },
@@ -967,7 +967,7 @@ const CONFIG = {
   "autoScroll": true,
   "petals": false,
   "sparkles": false,
-  "desktopPhoto": "galeri1.svg",
+  "desktopPhoto": "../_aset/p12.jpg",
   "backgrounds": {}
 };
 
@@ -1039,7 +1039,7 @@ function revealCover(){
 }
 (function(){
   let fired = false; const one = () => { if (!fired) { fired = true; revealCover(); } };
-  const im = new Image(); im.onload = one; im.onerror = one; im.src = "cover.svg";
+  const im = new Image(); im.onload = one; im.onerror = one; im.src = "../_aset/p15.jpg";
   if (im.complete) one();
 })();
 setTimeout(revealCover, 3500);
