@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#38323f"/><stop offset="1" stop-color="#221e28"/>
-  </linearGradient></defs>
-  <rect width="800" height="1000" fill="url(#g)"/>
-  <rect x="30" y="30" width="740" height="940" fill="none" stroke="#d9a441" stroke-width="2" opacity=".4"/>
-  <g transform="translate(400 470) scale(1.15)"><g opacity='.2' fill='#d9a441'><rect x='-80' y='-52' width='160' height='104' fill='none' stroke='#d9a441' stroke-width='3'/><rect x='-72' y='-44' width='18' height='12'/><rect x='-72' y='32' width='18' height='12'/><rect x='54' y='-44' width='18' height='12'/><rect x='54' y='32' width='18' height='12'/></g></g>
-  <text x="400" y="500" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="42" fill="#d9a441" opacity=".7">foto contoh 6</text>
-</svg>
