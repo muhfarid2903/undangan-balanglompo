@@ -81,7 +81,7 @@
     ".le-fab:hover{transform:translateY(-2px)}",
     ".le-fab .dot{width:8px;height:8px;border-radius:50%;background:#e0b15f;box-shadow:0 0 8px #e0b15f}",
     /* di layar sempit, bottom-nav undangan penuh-lebar — naikkan fab & panel agar tak menghalanginya */
-    "@media (max-width:560px){.le-fab,.le-panel{bottom:calc(74px + env(safe-area-inset-bottom,0px))}}",
+    "@media (max-width:560px){.le-fab{bottom:calc(74px + env(safe-area-inset-bottom,0px))}}",
     ".le-panel{position:fixed;left:16px;bottom:16px;z-index:99999;width:310px;max-width:calc(100vw - 32px);",
     "  max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:16px;color:#23232b;",
     "  box-shadow:0 18px 50px rgba(0,0,0,.3);font:400 13px/1.5 system-ui,sans-serif;transform:translateY(8px);",
@@ -125,7 +125,10 @@
     /* latar */
     ".le-foot{display:flex;gap:8px;padding:12px 18px}",
     ".le-foot button{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font:600 12px system-ui;background:#1d1d24;color:#fff}",
-    ".le-note{font-size:10.5px;color:#aaa;text-align:center;padding:0 18px 14px}"
+    ".le-note{font-size:10.5px;color:#aaa;text-align:center;padding:0 18px 14px}",
+    /* mobile: panel muat di antara bar atas browser & nav bawah (aturan di akhir agar menang atas .le-panel dasar) */
+    "@media (max-width:560px){.le-panel{left:16px;right:16px;width:auto;bottom:calc(74px + env(safe-area-inset-bottom,0px));",
+    "  max-height:calc(100dvh - 74px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px) - 84px)}}"
   ].join("");
   document.head.appendChild(css);
 
