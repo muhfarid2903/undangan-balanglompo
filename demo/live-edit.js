@@ -80,6 +80,8 @@
     "  letter-spacing:.3px;color:#fff;background:#1d1d24;box-shadow:0 8px 26px rgba(0,0,0,.28);transition:.2s}",
     ".le-fab:hover{transform:translateY(-2px)}",
     ".le-fab .dot{width:8px;height:8px;border-radius:50%;background:#e0b15f;box-shadow:0 0 8px #e0b15f}",
+    /* di layar sempit, bottom-nav undangan penuh-lebar — naikkan fab & panel agar tak menghalanginya */
+    "@media (max-width:560px){.le-fab,.le-panel{bottom:calc(74px + env(safe-area-inset-bottom,0px))}}",
     ".le-panel{position:fixed;left:16px;bottom:16px;z-index:99999;width:310px;max-width:calc(100vw - 32px);",
     "  max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:16px;color:#23232b;",
     "  box-shadow:0 18px 50px rgba(0,0,0,.3);font:400 13px/1.5 system-ui,sans-serif;transform:translateY(8px);",
