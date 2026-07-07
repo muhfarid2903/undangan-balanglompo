@@ -92,7 +92,7 @@
 
   /* Kanvas selebar HP di tengah */
   .app {
-    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh;
+    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; min-height: 100svh;
     background: var(--bg);
     box-shadow: 0 0 60px rgba(21,52,41,.16);
   }
@@ -318,7 +318,7 @@
   body.opened { overflow: auto; }
 
   /* ---------- INTRO (slide berurutan, gaya bab) ---------- */
-  #intro { padding: 0; min-height: 100vh; background: var(--bg-deep); }
+  #intro { padding: 0; min-height: 100vh; min-height: 100svh; background: var(--bg-deep); }
   #intro .frame { position: absolute; inset: 18px; pointer-events: none; z-index: 2; border: 1px solid rgba(185,138,47,.5); }
   #intro .frame::before, #intro .frame::after {
     content: ''; position: absolute; width: 14px; height: 14px; background: var(--gold);

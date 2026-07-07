@@ -71,7 +71,7 @@
   body { font-family: var(--serif); color: var(--ink); background: var(--bg); line-height: 1.65; overflow-x: hidden; }
   img { max-width: 100%; display: block; }
   .app {
-    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh;
+    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; min-height: 100svh;
     background:
       repeating-linear-gradient(0deg, rgba(53,50,44,.02) 0 1px, transparent 1px 4px),
       repeating-linear-gradient(90deg, rgba(53,50,44,.015) 0 1px, transparent 1px 4px),
@@ -235,7 +235,7 @@
   body.opened { overflow: auto; }
 
   /* ---------- INTRO ---------- */
-  #intro { padding: 0; min-height: 100vh; background: var(--bg-deep); }
+  #intro { padding: 0; min-height: 100vh; min-height: 100svh; background: var(--bg-deep); }
   #intro .frame { position: absolute; inset: 18px; pointer-events: none; z-index: 2; border: 1.5px solid rgba(125,143,109,.45); border-radius: 4px; }
   #intro .frame::after {
     content: ''; position: absolute; top: -13px; left: 50%; width: 120px; height: 26px; margin-left: -60px;

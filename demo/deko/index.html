@@ -68,7 +68,7 @@
   html { scroll-behavior: smooth; }
   body { font-family: var(--serif); color: var(--ink); background: var(--bg); line-height: 1.65; overflow-x: hidden; }
   img { max-width: 100%; display: block; }
-  .app { max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; background: var(--bg); box-shadow: 0 0 60px rgba(0,0,0,.65); }
+  .app { max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; min-height: 100svh; background: var(--bg); box-shadow: 0 0 60px rgba(0,0,0,.65); }
 
   /* ============ BAHASA BENTUK DEKO ============ */
   section { position: relative; padding: 72px 26px; overflow: hidden; text-align: center; }
@@ -252,7 +252,7 @@
   body.opened { overflow: auto; }
 
   /* ---------- INTRO ---------- */
-  #intro { padding: 0; min-height: 100vh; background: var(--bg-deep); }
+  #intro { padding: 0; min-height: 100vh; min-height: 100svh; background: var(--bg-deep); }
   #intro .frame { position: absolute; inset: 16px; pointer-events: none; z-index: 2; border: 1px solid rgba(207,165,78,.55); }
   #intro .frame::before { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(207,165,78,.3); }
   .intro-stage { position: absolute; inset: 0; z-index: 1; }

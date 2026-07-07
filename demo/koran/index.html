@@ -74,7 +74,7 @@
   }
   img { max-width: 100%; display: block; }
   .app {
-    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh;
+    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; min-height: 100svh;
     background:
       repeating-linear-gradient(0deg, rgba(28,26,23,.016) 0 1px, transparent 1px 3px),
       var(--bg);
@@ -215,7 +215,7 @@
   body.opened { overflow: auto; }
 
   /* ---------- INTRO ---------- */
-  #intro { padding: 0; min-height: 100vh; background: var(--bg-deep); }
+  #intro { padding: 0; min-height: 100vh; min-height: 100svh; background: var(--bg-deep); }
   #intro .frame { position: absolute; inset: 16px; pointer-events: none; z-index: 2; border: 2px solid var(--ink); }
   #intro .frame::before { content: ''; position: absolute; inset: 4px; border: 1px solid var(--ink); }
   .intro-stage { position: absolute; inset: 0; z-index: 1; }

@@ -69,7 +69,7 @@
   body { font-family: var(--serif); color: var(--ink); background: var(--bg); line-height: 1.65; overflow-x: hidden; }
   img { max-width: 100%; display: block; }
   .app {
-    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh;
+    max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; min-height: 100svh;
     background:
       radial-gradient(140% 90% at 50% 0%, rgba(255,250,235,.65), transparent 60%),
       radial-gradient(120% 60% at 50% 100%, rgba(122,84,32,.10), transparent 55%),
@@ -286,7 +286,7 @@
   body.opened { overflow: auto; }
 
   /* ---------- INTRO ---------- */
-  #intro { padding: 0; min-height: 100vh; background: var(--bg-deep); }
+  #intro { padding: 0; min-height: 100vh; min-height: 100svh; background: var(--bg-deep); }
   #intro .frame { position: absolute; inset: 18px; pointer-events: none; z-index: 2; border: 1.5px solid var(--gold); }
   #intro .frame::before { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(168,132,44,.5); }
   #intro .frame::after {

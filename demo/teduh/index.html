@@ -68,7 +68,7 @@
   html { scroll-behavior: smooth; }
   body { font-family: var(--sans); color: var(--ink); background: var(--bg); line-height: 1.65; overflow-x: hidden; }
   img { max-width: 100%; display: block; }
-  .app { max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; background: var(--bg); box-shadow: 0 0 60px rgba(38,38,32,.1); }
+  .app { max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; min-height: 100svh; background: var(--bg); box-shadow: 0 0 60px rgba(38,38,32,.1); }
 
   /* ============ BAHASA BENTUK TEDUH: ruang napas, huruf kecil ============ */
   section { position: relative; padding: 84px 30px; overflow: hidden; }
@@ -182,7 +182,7 @@
   body.opened { overflow: auto; }
 
   /* ---------- INTRO ---------- */
-  #intro { padding: 0; min-height: 100vh; background: var(--bg-deep); }
+  #intro { padding: 0; min-height: 100vh; min-height: 100svh; background: var(--bg-deep); }
   #intro .frame { position: absolute; inset: 20px; pointer-events: none; z-index: 2; border: 1px solid rgba(201,111,74,.35); border-radius: 18px; }
   .intro-stage { position: absolute; inset: 0; z-index: 1; }
   .intro-slide {
