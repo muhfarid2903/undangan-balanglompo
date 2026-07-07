@@ -1002,7 +1002,7 @@
       <div class="eyebrow">The Wedding Of</div>
       <div class="cover-frame">
         <div class="cover-frame-inner">
-          <img id="cover-photo" src="cover.webp" alt="Foto mempelai" onerror="this.onerror=null;this.src='cover.jpg'">
+          <img id="cover-photo" src="../_aset/couple1.jpg" alt="Foto mempelai" onerror="this.onerror=null;this.src='cover.jpg'">
         </div>
       </div>
       <div class="names" id="cover-names">Ani & Budi</div>
@@ -1231,7 +1231,7 @@ const CONFIG = {
     "mother": "Ibu Siti Aminah",
     "childOrder": "Putra kedua",
     "ig": "budisantoso",
-    "photo": "foto-pria.jpg"
+    "photo": "../_aset/pria1.jpg"
   },
   "bride": {
     "nick": "Ani",
@@ -1240,7 +1240,7 @@ const CONFIG = {
     "mother": "Ibu Nurhayati",
     "childOrder": "Putri pertama",
     "ig": "anirahma",
-    "photo": "foto-wanita.jpg"
+    "photo": "../_aset/wanita3.jpg"
   },
   "ayat": "“Dan di antara tanda-tanda kekuasaan-Nya diciptakan-Nya untukmu pasangan hidup dari jenismu sendiri supaya kamu mendapat ketenangan hati...”",
   "ayatRef": "QS. Ar-Rum: 21",
@@ -1458,7 +1458,7 @@ function revealCover(){
 // menyusul streaming. Aset halaman berikutnya dimuat berurutan (preloadInOrder).
 (function(){
   let fired = false; const one = () => { if (!fired) { fired = true; revealCover(); } };
-  const im = new Image(); im.onload = one; im.onerror = one; im.src = "cover.webp";
+  const im = new Image(); im.onload = one; im.onerror = one; im.src = "../_aset/couple1.jpg";
   if (im.complete) one();   // sudah di cache
 })();
 setTimeout(revealCover, 3500); // batas atas: maksimal 3,5 detik (hanya menunggu cover)
