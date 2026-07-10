@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="favicon.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dasbor Undangan — Ani &amp; Budi</title>
+<style>
+  :root { --gold:#b89b6e; --ink:#3f3933; --line:#e4d9c8; --green:#2e7d32; --red:#c0392b; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: var(--ink);
+         max-width: 960px; margin: 0 auto; padding: 20px; background:#faf6f0; line-height:1.5; }
+  h1 { font-size: 22px; margin: 0 0 2px; }
+  .sub { color:#8a7d70; font-size:14px; margin-bottom:14px; }
+  .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+  button, .btn { cursor:pointer; border:none; border-radius:8px; font-family:inherit; font-size:13px;
+                 padding:7px 12px; background:#efe7d8; color:var(--ink); text-decoration:none; display:inline-block; }
+  .muted { color:#8a7d70; font-size:12px; }
+
+  .cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:16px; }
+  .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 8px; text-align:center; }
+  .stat .num { font-size:26px; font-weight:700; color:var(--gold); }
+  .stat.green .num { color:var(--green); }
+  .stat.red .num { color:var(--red); }
+  .stat .lbl { font-size:11.5px; color:#8a7d70; text-transform:uppercase; letter-spacing:.4px; }
+
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
+  .card h2 { font-size:13px; margin:0 0 12px; color:#8a7d70; text-transform:uppercase; letter-spacing:.5px; }
+
+  .bar { margin-bottom:10px; }
+  .bar .top { display:flex; justify-content:space-between; font-size:13px; margin-bottom:3px; }
+  .bar .top b { font-weight:600; }
+  .track { background:#f1e9dc; border-radius:20px; height:13px; overflow:hidden; }
+  .fill { height:100%; border-radius:20px; background:linear-gradient(90deg, var(--gold), #d4b98a);
+          width:0; transition:width .6s ease; }
+  .fill.g { background:linear-gradient(90deg, #66a06a, #8fbc8f); }
+
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .chip { padding:5px 12px; border-radius:20px; font-size:12.5px; background:#f1e9dc; }
+  .chip.active { background:var(--gold); color:#fff; font-weight:600; }
+  .search { padding:8px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;
+            font-size:13px; max-width:240px; width:100%; }
+
+  .tblwrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  th { font-size:11.5px; color:#8a7d70; text-transform:uppercase; letter-spacing:.5px; }
+  .name { font-weight:600; }
+  .badge { font-size:11px; padding:2px 9px; border-radius:20px; font-weight:600; white-space:nowrap; }
+  .b-hadir { background:#e8f5e9; color:#2e7d32; }
+  .b-tidak { background:#fdecea; color:#c0392b; }
+  .b-none  { background:#eee; color:#999; }
+  .ci-yes { color:var(--green); font-weight:700; }
+  .ci-no  { color:#c9bda9; }
+
+  .wish { border-bottom:1px solid var(--line); padding:8px 0; font-size:13px; }
+  .wish:last-child { border-bottom:none; }
+  .wish .w-head { display:flex; justify-content:space-between; gap:8px; }
+  .wish .w-name { font-weight:600; }
+  .wish .w-time { color:#8a7d70; font-size:11.5px; white-space:nowrap; }
+  .wish .w-msg { color:#5c534b; }
+
+  .note { font-size:12px; color:#8a7d70; text-align:center; margin-top:18px; line-height:1.5; }
+  .err { background:#fdecea; border:1px solid #f5b7b1; color:var(--red); border-radius:12px;
+         padding:12px 14px; font-size:13.5px; margin-bottom:16px; display:none; }
+</style>
+</head>
+<body>
+  <h1>Dasbor Undangan</h1>
+  <div class="sub">Ani &amp; Budi — rekap tamu, RSVP &amp; check-in dalam satu layar. Data langsung dari Google Sheet.</div>
+
+  <div class="toolbar">
+    <button id="btn-refresh">↻ Muat ulang</button>
+    <button id="btn-csv">Unduh rekap CSV</button>
+    <a class="btn" href="kelola-tamu.html">⚙ Kelola daftar tamu</a>
+    <span class="muted" id="updated">Memuat…</span>
+  </div>
+
+  <div class="err" id="err">Gagal memuat data — cek koneksi internet, lalu tekan "Muat ulang".</div>
+
+  <div class="cards">
+    <div class="stat"><div class="num" id="s-tamu">…</div><div class="lbl">Tamu Diundang</div></div>
+    <div class="stat"><div class="num" id="s-dibuka">…</div><div class="lbl">Sudah Dibuka</div></div>
+    <div class="stat green"><div class="num" id="s-hadir">…</div><div class="lbl">Konfirmasi Hadir</div></div>
+    <div class="stat red"><div class="num" id="s-tidak">…</div><div class="lbl">Tidak Hadir</div></div>
+    <div class="stat"><div class="num" id="s-pax">…</div><div class="lbl">Estimasi Pax</div></div>
+    <div class="stat green"><div class="num" id="s-checkin">…</div><div class="lbl">Check-in Hari-H</div></div>
+    <div class="stat"><div class="num" id="s-ucapan">…</div><div class="lbl">Ucapan &amp; Doa</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Funnel Tamu (dari daftar undangan)</h2>
+    <div class="bar"><div class="top"><span>Sudah membuka undangan</span><b id="t-buka">—</b></div>
+      <div class="track"><div class="fill" id="f-buka"></div></div></div>
+    <div class="bar"><div class="top"><span>Sudah RSVP</span><b id="t-rsvp">—</b></div>
+      <div class="track"><div class="fill" id="f-rsvp"></div></div></div>
+    <div class="bar"><div class="top"><span>Konfirmasi hadir</span><b id="t-hadir">—</b></div>
+      <div class="track"><div class="fill" id="f-hadir"></div></div></div>
+    <div class="bar"><div class="top"><span>Check-in di lokasi</span><b id="t-ci">—</b></div>
+      <div class="track"><div class="fill g" id="f-ci"></div></div></div>
+    <div class="muted" id="funnel-note"></div>
+  </div>
+
+  <div class="card">
+    <h2>Status per Tamu</h2>
+    <div class="chips" id="chips">
+      <button class="chip active" data-f="semua">Semua</button>
+      <button class="chip" data-f="hadir">Hadir</button>
+      <button class="chip" data-f="tidak">Tidak Hadir</button>
+      <button class="chip" data-f="belum">Belum RSVP</button>
+      <button class="chip" data-f="belumbuka">Belum Dibuka</button>
+      <button class="chip" data-f="checkin">Sudah Check-in</button>
+    </div>
+    <input class="search" id="search" placeholder="Cari nama tamu…" />
+    <div class="tblwrap">
+      <table id="tbl">
+        <thead><tr><th>#</th><th>Nama</th><th>Dibuka</th><th>RSVP</th><th>Pax</th><th>Check-in</th></tr></thead>
+        <tbody><tr><td colspan="6" class="muted">Memuat…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" id="card-luar" style="display:none">
+    <h2>RSVP di Luar Daftar Tamu</h2>
+    <div class="muted" style="margin-bottom:8px">Mengisi RSVP tapi namanya tidak cocok dengan daftar undangan
+      (beda ejaan, atau memang diundang lisan). Pax mereka sudah terhitung di kartu "Estimasi Pax".</div>
+    <div class="tblwrap">
+      <table id="tbl-luar">
+        <thead><tr><th>#</th><th>Nama</th><th>RSVP</th><th>Pax</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" id="card-wish" style="display:none">
+    <h2>Ucapan Terbaru</h2>
+    <div id="wishes"></div>
+  </div>
+
+  <div class="note">
+    Halaman ini untuk mempelai — jangan bagikan link-nya.
+    Data diperbarui otomatis setiap 30 detik dari Google Sheet (tab DaftarTamu, RSVP, CheckIn, Dibuka).
+  </div>
+
+<script>
+  // URL Web App Apps Script (sama dengan undangan, scanner & kelola tamu)
+  const SHEET_URL = "https://script.google.com/macros/s/GANTI_DENGAN_ID_DEPLOY_ANDA/exec";
+  const EVENT_ID = "henny-farid";  // diisi generator (id acara)
+  function gasUrl(base, qs){
+  if (!base) return base;
+  var id = (typeof CONFIG !== "undefined" && CONFIG && CONFIG.eventId) ? CONFIG.eventId : (typeof EVENT_ID !== "undefined" ? EVENT_ID : "");
+  var q = (id ? "m=" + encodeURIComponent(id) : "") + (id && qs ? "&" : "") + (qs || "");
+  return q ? base + "?" + q : base;
+}
+
+  /* ---- MODE DEMO ----------------------------------------------------
+     SHEET_URL kosong = katalog demo: tampilkan data contoh agar calon
+     pemesan bisa melihat bentuk dasbor. Pada undangan asli (SHEET_URL
+     terisi) blok ini tidak terpakai sama sekali. */
+  const DEMO = !SHEET_URL;
+  const DEMO_TAMU = [
+    // [nama, dibuka n×, rsvp, pax, checkin, ucapan]
+    ["Bapak Ahmad Fauzi",           2, "Hadir", 2, 1, "Barakallahu lakuma, selamat menempuh hidup baru!"],
+    ["Ibu Sri Wahyuni",             1, "Hadir", 3, 1, "Semoga menjadi keluarga sakinah mawaddah warahmah."],
+    ["Keluarga H. Baso Dg. Situju", 1, "Hadir", 4, 1, ""],
+    ["Bapak Muh. Akbar & Keluarga", 3, "Hadir", 2, 1, "Selamat! Lancar sampai hari H ya."],
+    ["Ibu Hj. Nurlina",             1, "Hadir", 1, 1, ""],
+    ["Andi Rahmat",                 2, "Hadir", 2, 1, "Turut berbahagia, sampai jumpa di resepsi 🎉"],
+    ["Keluarga Bapak Sofyan",       1, "Hadir", 3, 1, ""],
+    ["Ibu Ratna Dewi",              1, "Hadir", 2, 1, "Doa terbaik untuk kalian berdua."],
+    ["Bapak Drs. Hasanuddin",       2, "Hadir", 2, 0, ""],
+    ["Sitti Aminah",                1, "Hadir", 1, 0, "Selamat menempuh hidup baru 🤲"],
+    ["Bapak Karim & Ibu",           1, "Tidak Hadir", 0, 0, "Mohon maaf belum bisa hadir, doa kami menyertai."],
+    ["Keluarga Ibu Marwah",         1, "Tidak Hadir", 0, 0, ""],
+    ["Muh. Ilham Saputra",          2, "Tidak Hadir", 0, 0, ""],
+    ["Ibu Fitriani",                1, "", 0, 0, ""],
+    ["Bapak H. Sallatu",            1, "", 0, 0, ""],
+    ["Nurul Hikmah",                0, "", 0, 0, ""],
+    ["Bapak Jamaluddin",            0, "", 0, 0, ""],
+    ["Ibu Rosmini & Keluarga",      0, "", 0, 0, ""],
+    ["Ikbal Ramadhan",              0, "", 0, 0, ""],
+    ["Keluarga Bapak Syamsul",      0, "", 0, 0, ""]
+  ];
+  const DEMO_LUAR = [
+    ["Teman KKN Ani", "Hadir", 2, "Ikut bahagia! Titip salam buat pengantin 😍"],
+    ["Alumni SMA 5 Makassar", "Hadir", 1, ""]
+  ];
+  function demoData(){
+    const now = Date.now(), H = 3600e3;
+    const tamu = DEMO_TAMU.map(r => ({ name: r[0] }));
+    const rsvp = [];
+    DEMO_TAMU.forEach((r, i) => { if (r[2]) rsvp.push({ name: r[0], attend: r[2], guests: r[3] || "", msg: r[5] || "", t: now - (i + 2) * 5 * H }); });
+    DEMO_LUAR.forEach((r, i) => rsvp.push({ name: r[0], attend: r[1], guests: r[2], msg: r[3] || "", t: now - (i + 1) * 7 * H }));
+    rsvp.sort((a, b) => b.t - a.t);   // server asli mengirim terbaru dulu
+    const checkin = DEMO_TAMU.filter(r => r[4]).map((r, i) => ({ name: r[0], t: now - (i + 1) * 7 * 6e4 }));
+    const dibuka = DEMO_TAMU.filter(r => r[1]).map(r => ({ name: r[0], n: r[1] }));
+    return { tamu, rsvp, checkin, dibuka };
+  }
+
+  const $ = s => document.querySelector(s);
+  let guests = [], rsvpAll = [], rsvpMap = {}, checkinList = [], checkinSet = new Set();
+  let dibukaMap = new Map(), openMode = false;   // openMode = backend baru (endpoint rekap) aktif
+  let filter = "semua";
+
+  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function norm(s){ return String(s||"").trim().toLowerCase(); }
+  function isHadir(a){ return norm(a).indexOf("hadir") === 0; }
+  function isTidak(a){ return norm(a).indexOf("tidak") === 0; }
+  // Pax: RSVP "Hadir" tanpa angka tetap dihitung 1 orang
+  function paxOf(w){ const n = parseInt(w.guests, 10); return (isNaN(n) || n < 1) ? 1 : n; }
+  function badge(w){
+    if (!w) return '<span class="badge b-none">Belum</span>';
+    if (isHadir(w.attend)) return '<span class="badge b-hadir">Hadir</span>';
+    if (isTidak(w.attend)) return '<span class="badge b-tidak">Tdk Hadir</span>';
+    return '<span class="badge b-none">—</span>';
+  }
+  function fmtTime(t){
+    const d = new Date(t);
+    return isNaN(d) ? "" : d.toLocaleString("id-ID", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" });
+  }
+
+  function loadAll(){
+    if (DEMO) {   // katalog demo — tanpa jaringan
+      const d = demoData();
+      applyData(d.tamu, d.rsvp, d.checkin, d.dibuka);
+      $("#updated").textContent = "Mode demo — data contoh";
+      return;
+    }
+    $("#updated").textContent = "Memuat…";
+    // Coba endpoint rekap (backend baru): semua data dalam SATU panggilan,
+    // termasuk data "dibuka". Backend lama membalas type tak dikenal dengan
+    // daftar ucapan (array) -> jatuh ke mode lama (3 panggilan, tanpa "dibuka").
+    fetch(gasUrl(SHEET_URL, "type=rekap")).then(r => r.json())
+      .then(d => {
+        if (d && d.ok && Array.isArray(d.tamu)) applyData(d.tamu, d.rsvp, d.checkin, d.dibuka);
+        else loadLegacy();
+      })
+      .catch(loadLegacy);
+  }
+  function loadLegacy(){
+    Promise.all([
+      fetch(gasUrl(SHEET_URL, "type=tamu")).then(r => r.json()).catch(() => null),
+      fetch(gasUrl(SHEET_URL, "")).then(r => r.json()).catch(() => null),
+      fetch(gasUrl(SHEET_URL, "type=checkin")).then(r => r.json()).catch(() => null)
+    ]).then(([tamu, rsvp, ci]) => {
+      const gagal = !tamu && !rsvp && !ci;
+      $("#err").style.display = gagal ? "block" : "none";
+      if (gagal) { $("#updated").textContent = "Gagal memuat"; return; }
+      applyData((tamu && tamu.list) || [], Array.isArray(rsvp) ? rsvp : [], (ci && ci.list) || [], null);
+    });
+  }
+  function applyData(tamu, rsvp, ci, dibuka){
+    $("#err").style.display = "none";
+    guests = tamu || [];
+    rsvpAll = rsvp || [];
+    // Server mengirim terbaru dulu -> entri pertama per nama = RSVP TERAKHIR orang itu
+    // (tamu yang submit berulang tidak dihitung ganda).
+    rsvpMap = {};
+    rsvpAll.forEach(w => { const k = norm(w.name); if (k && !(k in rsvpMap)) rsvpMap[k] = w; });
+    checkinList = ci || [];
+    checkinSet = new Set(checkinList.map(x => norm(x.name)));
+    openMode = Array.isArray(dibuka);
+    dibukaMap = new Map();
+    if (openMode) dibuka.forEach(x => dibukaMap.set(norm(x.name), x));
+
+    render();
+    $("#updated").textContent = "Diperbarui " +
+      new Date().toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+  }
+
+  function render(){
+    // ---- Kartu ringkasan (dari SEMUA RSVP unik, termasuk di luar daftar) ----
+    const uniq = Object.values(rsvpMap);
+    const hadir = uniq.filter(w => isHadir(w.attend));
+    const tidak = uniq.filter(w => isTidak(w.attend));
+    const pax = hadir.reduce((a, w) => a + paxOf(w), 0);
+    const ucapan = rsvpAll.filter(w => String(w.msg||"").trim()).length;
+    $("#s-tamu").textContent = guests.length;
+    $("#s-dibuka").textContent = openMode ? dibukaMap.size : "—";
+    $("#s-hadir").textContent = hadir.length;
+    $("#s-tidak").textContent = tidak.length;
+    $("#s-pax").textContent = pax;
+    $("#s-checkin").textContent = checkinList.length;
+    $("#s-ucapan").textContent = ucapan;
+
+    // ---- Funnel (hanya di antara tamu yang ada di daftar undangan) ----
+    const keys = guests.map(g => norm(g.name));
+    const setDaftar = new Set(keys);
+    const nRsvp  = keys.filter(k => k in rsvpMap).length;
+    const nHadir = keys.filter(k => rsvpMap[k] && isHadir(rsvpMap[k].attend)).length;
+    const nCi    = keys.filter(k => checkinSet.has(k)).length;
+    const tot = guests.length;
+    const pct = n => tot ? Math.round(n / tot * 100) : 0;
+    const nBuka = openMode ? keys.filter(k => dibukaMap.has(k)).length : 0;
+    $("#t-buka").textContent = openMode ? (nBuka + " / " + tot + " (" + pct(nBuka) + "%)") : "—";
+    $("#f-buka").style.width = (openMode ? pct(nBuka) : 0) + "%";
+    $("#t-rsvp").textContent  = nRsvp  + " / " + tot + " (" + pct(nRsvp)  + "%)";
+    $("#t-hadir").textContent = nHadir + " / " + tot + " (" + pct(nHadir) + "%)";
+    $("#t-ci").textContent    = nCi    + " / " + tot + " (" + pct(nCi)    + "%)";
+    $("#f-rsvp").style.width  = pct(nRsvp)  + "%";
+    $("#f-hadir").style.width = pct(nHadir) + "%";
+    $("#f-ci").style.width    = pct(nCi)    + "%";
+    $("#funnel-note").textContent = !openMode
+      ? 'Baris "membuka undangan" aktif setelah Apps Script versi baru di-deploy (lihat apps-script.gs).'
+      : (tot ? "" : "Daftar tamu masih kosong — tambahkan lewat halaman Kelola Daftar Tamu.");
+
+    // ---- Tabel status per tamu ----
+    const q = norm($("#search").value);
+    const rows = guests.filter(g => {
+      const k = norm(g.name), w = rsvpMap[k];
+      if (q && k.indexOf(q) === -1) return false;
+      if (filter === "hadir")   return w && isHadir(w.attend);
+      if (filter === "tidak")   return w && isTidak(w.attend);
+      if (filter === "belum")   return !w;
+      if (filter === "belumbuka") return openMode ? !dibukaMap.has(k) : true;
+      if (filter === "checkin") return checkinSet.has(k);
+      return true;
+    });
+    const tb = $("#tbl tbody");
+    if (!guests.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="muted">Belum ada tamu di daftar.</td></tr>';
+    } else if (!rows.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="muted">Tidak ada tamu yang cocok dengan filter/pencarian.</td></tr>';
+    } else {
+      tb.innerHTML = rows.map((g, i) => {
+        const k = norm(g.name), w = rsvpMap[k];
+        const d = openMode ? dibukaMap.get(k) : null;
+        const buka = d ? ('<span class="ci-yes">✓' + (d.n > 1 ? " " + d.n + "×" : "") + '</span>') : '<span class="ci-no">—</span>';
+        const paxTx = (w && isHadir(w.attend)) ? paxOf(w) : "—";
+        const ci = checkinSet.has(k) ? '<span class="ci-yes">✓ Hadir</span>' : '<span class="ci-no">—</span>';
+        return `<tr><td>${i+1}</td><td class="name">${esc(g.name)}</td><td>${buka}</td><td>${badge(w)}</td><td>${paxTx}</td><td>${ci}</td></tr>`;
+      }).join("");
+    }
+
+    // ---- RSVP di luar daftar tamu ----
+    const luar = uniq.filter(w => !setDaftar.has(norm(w.name)));
+    $("#card-luar").style.display = luar.length ? "" : "none";
+    if (luar.length) {
+      $("#tbl-luar tbody").innerHTML = luar.map((w, i) => {
+        const paxTx = isHadir(w.attend) ? paxOf(w) : "—";
+        return `<tr><td>${i+1}</td><td class="name">${esc(w.name)}</td><td>${badge(w)}</td><td>${paxTx}</td></tr>`;
+      }).join("");
+    }
+
+    // ---- Ucapan terbaru ----
+    const wishes = rsvpAll.filter(w => String(w.msg||"").trim()).slice(0, 5);
+    $("#card-wish").style.display = wishes.length ? "" : "none";
+    if (wishes.length) {
+      $("#wishes").innerHTML = wishes.map(w => `
+        <div class="wish">
+          <div class="w-head"><span class="w-name">${esc(w.name)}</span><span class="w-time">${fmtTime(w.t)}</span></div>
+          <div class="w-msg">${esc(w.msg)}</div>
+        </div>`).join("");
+    }
+  }
+
+  // ---- Filter, cari, muat ulang, CSV ----
+  $("#chips").addEventListener("click", (e) => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    document.querySelectorAll("#chips .chip").forEach(c => c.classList.remove("active"));
+    b.classList.add("active");
+    filter = b.dataset.f;
+    render();
+  });
+  $("#search").addEventListener("input", render);
+  $("#btn-refresh").addEventListener("click", loadAll);
+  $("#btn-csv").addEventListener("click", () => {
+    let csv = "Nama,Dibuka,RSVP,Pax,CheckIn\n";
+    guests.forEach(g => {
+      const k = norm(g.name), w = rsvpMap[k];
+      const bukaTx = openMode ? (dibukaMap.has(k) ? "Ya" : "Belum") : "";
+      const st = w ? (isHadir(w.attend) ? "Hadir" : (isTidak(w.attend) ? "Tidak Hadir" : w.attend)) : "Belum RSVP";
+      const paxTx = (w && isHadir(w.attend)) ? paxOf(w) : "";
+      csv += `"${String(g.name||'').replace(/"/g,'""')}","${bukaTx}","${st}","${paxTx}","${checkinSet.has(k) ? "Ya" : ""}"\n`;
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type:"text/csv;charset=utf-8;" }));
+    a.download = "rekap-undangan.csv"; a.click();
+  });
+
+  if (DEMO) {
+    const b = document.createElement("div");
+    b.style.cssText = "background:#fff8e1;border:1px solid #ffe082;color:#8a6d1a;border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:14px";
+    b.innerHTML = "<b>Mode demo</b> — semua angka di halaman ini data contoh. Pada undangan asli, dasbor terhubung ke Google Sheet Anda dan diperbarui otomatis.";
+    document.body.insertBefore(b, document.querySelector(".toolbar"));
+    document.querySelector(".note").textContent = "Contoh dasbor untuk calon pemesan — pada undangan asli, data tamu, RSVP & check-in acara Anda tampil di sini secara real-time.";
+  }
+
+  loadAll();
+  setInterval(loadAll, 30000);
+</script>
+</body>
+</html>
