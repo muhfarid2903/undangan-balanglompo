@@ -44,7 +44,9 @@
 </head>
 <body>
   <h1>Kelola Daftar Tamu</h1>
-  <div class="sub">Terhubung ke Google Sheet <b>DaftarTamu</b> — semua perubahan tersimpan & terlihat oleh semua petugas.</div>
+  <div class="sub">Daftar tamu <b>pribadi</b> — tersimpan di browser ini saja (tidak menulis ke
+    Google Sheet bersama, jadi tidak mengubah daftar milik pasangan). Unduh CSV secara berkala
+    sebagai cadangan.</div>
 
   <div class="card">
     <label>Tambah tamu</label>
@@ -64,7 +66,8 @@
     <div class="toolbar" style="margin-bottom:10px">
       <input class="search" id="search" placeholder="Cari nama / petugas…" />
       <span class="count" id="count"></span>
-      <button class="btn-sm btn-copy" id="btn-refresh">↻ Muat ulang</button>
+      <button class="btn-sm btn-copy" id="btn-refresh">↻ Muat ulang RSVP</button>
+      <button class="btn-sm btn-copy" id="btn-import">⇩ Impor dari daftar bersama</button>
       <button class="btn-sm btn-copy" id="btn-csv">Unduh CSV</button>
     </div>
     <table id="tbl">
@@ -74,53 +77,32 @@
   </div>
 
 <script>
-  // URL Web App Apps Script (sama dengan undangan & scanner)
-  const SHEET_URL = "https://script.google.com/macros/s/AKfycbxN537VT3lkzinCZ3JYXP-KjdgN3st29G_qkax7SrvSH7EDknS5f5l-wh6eCY9YZ5zdwQ/exec";
-  const EVENT_ID = "henny-farid";  // diisi generator (id acara)
-  function gasUrl(base, qs){
-  if (!base) return base;
-  var id = (typeof CONFIG !== "undefined" && CONFIG && CONFIG.eventId) ? CONFIG.eventId : (typeof EVENT_ID !== "undefined" ? EVENT_ID : "");
-  var q = (id ? "m=" + encodeURIComponent(id) : "") + (id && qs ? "&" : "") + (qs || "");
-  return q ? base + "?" + q : base;
-}
-
-  /* ---- MODE DEMO ----------------------------------------------------
-     SHEET_URL kosong = katalog demo: tampilkan daftar tamu contoh;
-     tambah/hapus hanya terjadi di halaman ini (tanpa Google Sheet).
-     Pada undangan asli (SHEET_URL terisi) blok ini tidak terpakai. */
-  const DEMO = !SHEET_URL;
-  const DEMO_TAMU = [
-    // [nama, no wa, petugas, rsvp]
-    ["Bapak Ahmad Fauzi",           "0812xxxx7001", "Rahmat", "Hadir"],
-    ["Ibu Sri Wahyuni",             "0812xxxx7002", "Rahmat", "Hadir"],
-    ["Keluarga H. Baso Dg. Situju", "0812xxxx7003", "Lisa",   "Hadir"],
-    ["Bapak Muh. Akbar & Keluarga", "0812xxxx7004", "Lisa",   "Hadir"],
-    ["Ibu Hj. Nurlina",             "",             "Rahmat", "Hadir"],
-    ["Andi Rahmat",                 "0812xxxx7006", "Lisa",   "Hadir"],
-    ["Keluarga Bapak Sofyan",       "0812xxxx7007", "Rahmat", "Hadir"],
-    ["Ibu Ratna Dewi",              "0812xxxx7008", "Lisa",   "Hadir"],
-    ["Bapak Drs. Hasanuddin",       "0812xxxx7009", "Rahmat", "Hadir"],
-    ["Sitti Aminah",                "",             "Lisa",   "Hadir"],
-    ["Bapak Karim & Ibu",           "0812xxxx7011", "Rahmat", "Tidak Hadir"],
-    ["Keluarga Ibu Marwah",         "0812xxxx7012", "Lisa",   "Tidak Hadir"],
-    ["Muh. Ilham Saputra",          "0812xxxx7013", "Rahmat", "Tidak Hadir"],
-    ["Ibu Fitriani",                "0812xxxx7014", "Lisa",   ""],
-    ["Bapak H. Sallatu",            "",             "Rahmat", ""],
-    ["Nurul Hikmah",                "0812xxxx7016", "Lisa",   ""],
-    ["Bapak Jamaluddin",            "0812xxxx7017", "Rahmat", ""],
-    ["Ibu Rosmini & Keluarga",      "0812xxxx7018", "Lisa",   ""],
-    ["Ikbal Ramadhan",              "0812xxxx7019", "Rahmat", ""],
-    ["Keluarga Bapak Syamsul",      "0812xxxx7020", "Lisa",   ""]
-  ];
-  function demoLink(name){
-    return location.href.replace(/kelola-tamu\.html.*$/, "") + "?to=" + encodeURIComponent(name);
-  }
+  /* ---- HALAMAN MANDIRI --------------------------------------------
+     Backend Apps Script di bawah dipakai BERSAMA dengan situs pasangan
+     (hennyfarid.balanglompo.com), sehingga halaman ini TIDAK menulis
+     apa pun ke sana. Daftar tamu disimpan di localStorage browser;
+     backend hanya DIBACA untuk menampilkan status RSVP (tamu tetap
+     ber-RSVP lewat undangan ke Sheet bersama). ------------------- */
+  const RSVP_URL = "https://script.google.com/macros/s/AKfycbxN537VT3lkzinCZ3JYXP-KjdgN3st29G_qkax7SrvSH7EDknS5f5l-wh6eCY9YZ5zdwQ/exec"; // hanya-baca
+  const STORE_KEY = "tamu-faridhenny";
 
   const $ = s => document.querySelector(s);
-  let guests = [];
+  let guests = [];   // {name, phone, pic}
   let rsvpMap = {};
 
   function esc(s){ return String(s||"").replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function loadStore(){
+    try { guests = JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+    catch(_) { guests = []; }
+  }
+  function saveStore(){ localStorage.setItem(STORE_KEY, JSON.stringify(guests)); }
+
+  // Link undangan selalu menunjuk situs tempat halaman ini dibuka
+  // (faridhenny.balanglompo.com), bukan base dari backend bersama.
+  function guestLink(name){
+    return location.href.replace(/kelola-tamu\.html.*$/, "") + "?to=" + encodeURIComponent(name||"");
+  }
 
   // Nomor WA -> format internasional 62…
   function waPhone(p){
@@ -140,7 +122,7 @@
       "___________________\n\n" +
       "Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami.\n\n" +
       "Berikut link undangan kami, untuk info lengkap dari acara, bisa kunjungi :\n\n" +
-      (g.link || "") + "\n\n" +
+      guestLink(g.name) + "\n\n" +
       "Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.\n\n" +
       "Terima Kasih\n\n" +
       "Hormat kami,\n" +
@@ -167,6 +149,7 @@
     if (!guests.length) { tb.innerHTML = '<tr><td colspan="5" class="muted">Belum ada tamu. Tambahkan di atas.</td></tr>'; return; }
     tb.innerHTML = rows.map((g, i) => {
       const status = rsvpMap[(g.name||"").trim().toLowerCase()] || "";
+      const link = guestLink(g.name);
       const wa = "https://wa.me/" + waPhone(g.phone) + "?text=" + encodeURIComponent(waMessage(g));
       return `<tr>
         <td>${i+1}</td>
@@ -176,8 +159,8 @@
         <td><div class="actions">
           <a class="btn-sm btn-wa" href="${esc(wa)}" target="_blank" rel="noopener">Kirim WA</a>
           <button class="btn-sm btn-copy" data-idx="${i}">Salin pesan</button>
-          <button class="btn-sm btn-copy" data-link="${esc(g.link||"")}">Salin link</button>
-          <a class="btn-sm btn-link" href="${esc(g.link||"#")}" target="_blank" rel="noopener">Pratinjau</a>
+          <button class="btn-sm btn-copy" data-link="${esc(link)}">Salin link</button>
+          <a class="btn-sm btn-link" href="${esc(link)}" target="_blank" rel="noopener">Pratinjau</a>
           <button class="btn-sm btn-del" data-del="${i}" title="Hapus tamu" aria-label="Hapus tamu">🗑️</button>
         </div></td>
       </tr>`;
@@ -192,96 +175,81 @@
         const o = b.textContent; b.textContent = "Tersalin ✓"; setTimeout(()=>b.textContent=o, 1200);
       });
     }));
-    tb.querySelectorAll(".btn-del[data-del]").forEach(b => b.addEventListener("click", () => {
+    tb.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
       const g = rows[+b.dataset.del];
       if (!g) return;
-      if (DEMO) {   // hapus lokal saja
-        if (!confirm(`Hapus tamu "${g.name}" dari daftar?`)) return;
-        guests.splice(guests.indexOf(g), 1);
-        render();
-        return;
-      }
-      if (!g.row) { alert("Fitur hapus butuh backend versi baru.\nDeploy ulang Apps Script (New version), lalu muat ulang halaman ini."); return; }
-      if (!confirm(`Hapus tamu "${g.name}" dari daftar?\nTindakan ini tidak bisa dibatalkan.`)) return;
-      b.disabled = true; b.textContent = "⏳";
-      // no-cors (sama seperti tambah tamu): respons tak terbaca, jadi kita muat
-      // ulang daftar untuk melihat hasilnya — kalau baris masih ada berarti gagal.
-      fetch(gasUrl(SHEET_URL, ""), { method:"POST", mode:"no-cors", body: JSON.stringify({ type:"hapus-tamu", row: g.row, name: g.name }) })
-        .then(() => { loadGuests(); })
-        .catch(() => {
-          alert("Gagal menghapus — cek koneksi, lalu coba lagi.");
-          b.disabled = false; b.textContent = "🗑️";
-        });
+      if (!confirm(`Hapus tamu "${g.name}" dari daftar?`)) return;
+      guests.splice(guests.indexOf(g), 1);
+      saveStore();
+      render();
     }));
   }
 
-  function loadGuests() {
-    if (DEMO) {   // katalog demo — tanpa jaringan
-      guests = DEMO_TAMU.map((r, i) => ({ row: i + 2, name: r[0], phone: r[1], pic: r[2], link: demoLink(r[0]) }));
+  // Status RSVP dibaca dari backend bersama (hanya-baca, tidak menulis).
+  function loadRsvp() {
+    fetch(RSVP_URL).then(r => r.json()).then(list => {
       rsvpMap = {};
-      DEMO_TAMU.forEach(r => { if (r[3]) rsvpMap[r[0].trim().toLowerCase()] = r[3]; });
-      render();
-      return;
-    }
-    $("#tbl tbody").innerHTML = '<tr><td colspan="5" class="muted">Memuat…</td></tr>';
-    Promise.all([
-      fetch(gasUrl(SHEET_URL, "type=tamu")).then(r => r.json()).catch(() => ({ list: [] })),
-      fetch(gasUrl(SHEET_URL, "")).then(r => r.json()).catch(() => [])
-    ]).then(([tamu, rsvp]) => {
-      guests = (tamu && tamu.list) ? tamu.list : [];
-      rsvpMap = {};
-      (Array.isArray(rsvp) ? rsvp : []).forEach(w => {
+      (Array.isArray(list) ? list : []).forEach(w => {
         if (w.name) rsvpMap[String(w.name).trim().toLowerCase()] = w.attend || "";
       });
       render();
-    });
+    }).catch(() => {});
   }
 
   $("#btn-add").addEventListener("click", () => {
     const name = $("#i-name").value.trim();
     if (!name) { $("#msg").textContent = "Nama wajib diisi."; return; }
-    const payload = { type:"tamu", name, phone: $("#i-phone").value.trim(), pic: $("#i-pic").value.trim() };
-    const btn = $("#btn-add"); btn.disabled = true; $("#msg").textContent = "Menyimpan…";
-    if (DEMO) {   // tambah lokal saja
-      guests.unshift({ row: -1, name: name, phone: payload.phone, pic: payload.pic, link: demoLink(name) });
-      $("#i-name").value = $("#i-phone").value = "";
-      $("#msg").textContent = "✓ Tersimpan (demo — hanya di halaman ini)";
-      btn.disabled = false;
-      setTimeout(() => { $("#msg").textContent = ""; }, 1800);
-      render();
-      return;
+    if (guests.some(g => (g.name||"").trim().toLowerCase() === name.toLowerCase())) {
+      $("#msg").textContent = "Nama itu sudah ada di daftar."; return;
     }
-    // no-cors: Apps Script membalas redirect tanpa header CORS sehingga respons
-    // tak bisa dibaca browser. Mode ini membuat promise tetap resolve setelah
-    // data terkirim (write pasti jalan), lalu kita muat ulang untuk konfirmasi.
-    fetch(gasUrl(SHEET_URL, ""), { method:"POST", mode:"no-cors", body: JSON.stringify(payload) })
-      .then(() => {
-        $("#i-name").value = $("#i-phone").value = ""; // biarkan petugas tetap terisi
-        $("#msg").textContent = "✓ Tersimpan";
-        setTimeout(() => { $("#msg").textContent = ""; loadGuests(); }, 900);
-      })
-      .catch(() => { $("#msg").textContent = "Gagal — cek koneksi."; })
-      .finally(() => { btn.disabled = false; });
+    guests.unshift({ name, phone: $("#i-phone").value.trim(), pic: $("#i-pic").value.trim() });
+    saveStore();
+    $("#i-name").value = $("#i-phone").value = ""; // biarkan petugas tetap terisi
+    $("#msg").textContent = "✓ Tersimpan";
+    setTimeout(() => { $("#msg").textContent = ""; }, 1800);
+    render();
   });
 
-  if (DEMO) {
-    $(".sub").innerHTML = "<b>Mode demo</b> — daftar contoh; tambah/hapus hanya tersimpan di halaman ini. Pada undangan asli, daftar ini terhubung ke Google Sheet <b>DaftarTamu</b> dan bisa dikerjakan beberapa petugas sekaligus.";
-  }
+  // Impor sekali-jalan: salin nama/no. WA dari daftar Sheet bersama
+  // (mis. tamu yang terlanjur ditambahkan lewat halaman lama) ke daftar
+  // pribadi ini. Hanya membaca — daftar bersama tidak berubah.
+  $("#btn-import").addEventListener("click", () => {
+    if (!confirm("Salin tamu dari daftar Google Sheet bersama ke daftar pribadi ini?\nDaftar bersama tidak akan berubah.")) return;
+    const b = $("#btn-import"); b.disabled = true; b.textContent = "Mengimpor…";
+    fetch(RSVP_URL + "?type=tamu").then(r => r.json()).then(data => {
+      const list = (data && data.list) ? data.list : [];
+      const have = {};
+      guests.forEach(g => { have[(g.name||"").trim().toLowerCase()] = true; });
+      let n = 0;
+      list.forEach(g => {
+        const k = String(g.name||"").trim().toLowerCase();
+        if (!k || have[k]) return;
+        guests.push({ name: g.name, phone: g.phone || "", pic: g.pic || "" });
+        have[k] = true; n++;
+      });
+      saveStore();
+      render();
+      alert(n ? n + " tamu berhasil diimpor." : "Tidak ada tamu baru untuk diimpor.");
+    }).catch(() => { alert("Gagal mengambil daftar bersama — cek koneksi."); })
+      .finally(() => { b.disabled = false; b.textContent = "⇩ Impor dari daftar bersama"; });
+  });
 
   $("#search").addEventListener("input", render);
-  $("#btn-refresh").addEventListener("click", loadGuests);
+  $("#btn-refresh").addEventListener("click", loadRsvp);
   $("#btn-csv").addEventListener("click", () => {
     let csv = "Nama,No WA,Petugas,RSVP,Link\n";
     guests.forEach(g => {
       const status = rsvpMap[(g.name||"").trim().toLowerCase()] || "";
-      csv += `"${(g.name||'').replace(/"/g,'""')}","${g.phone||''}","${g.pic||''}","${status}","${g.link||''}"\n`;
+      csv += `"${(g.name||'').replace(/"/g,'""')}","${g.phone||''}","${g.pic||''}","${status}","${guestLink(g.name)}"\n`;
     });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8;"}));
     a.download = "daftar-tamu.csv"; a.click();
   });
 
-  loadGuests();
+  loadStore();
+  render();
+  loadRsvp();
 </script>
 </body>
 </html>
