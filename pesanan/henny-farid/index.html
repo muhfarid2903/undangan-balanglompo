@@ -227,8 +227,9 @@
     box-shadow: 0 18px 44px rgba(0,0,0,.4);
   }
   #cover .names {
-    font-family: var(--display); font-size: clamp(30px, 8.6vw, 40px); line-height: 1.2;
-    letter-spacing: 4px; text-transform: uppercase; color: #f6efdb; white-space: nowrap;
+    font-family: var(--display); font-size: clamp(22px, 6vw, 32px); line-height: 1.35;
+    letter-spacing: 3px; text-transform: uppercase; color: #f6efdb;
+    max-width: 24ch; margin: 0 auto; text-wrap: balance;
   }
   #cover .names .amp-s { font-family: var(--script); text-transform: none; letter-spacing: 0; color: var(--gold-soft); font-size: 1.25em; vertical-align: -4px; }
   .date-plate {
@@ -509,7 +510,7 @@
   .gal-item:hover img { transform: scale(1.02); box-shadow: 0 14px 32px rgba(59,53,32,.26); }
   /* pola kolase: 1 hero lebar, lalu pasangan offset bergantian */
   .gal-item.wide { grid-column: 1 / -1; aspect-ratio: 16 / 10.5; }
-  .gal-item.tall { aspect-ratio: 3 / 3.9; }
+  .gal-item.tall { aspect-ratio: 2 / 3; }   /* samakan dengan rasio asli foto (2:3) agar tidak terpotong */
   .gal-item.tall.turun { margin-top: 26px; }
   .gal-item.tall.naik  { margin-bottom: 26px; }
   .gal-item .no {
@@ -957,29 +958,13 @@
     <section id="couple" class="band-cream2">
       <div class="roman">II</div>
       <div class="chap reveal"><span class="no">02</span><span class="eyebrow">Mempelai</span></div>
-      <h2 class="sec-title reveal">Bride &amp;<br>Groom</h2>
+      <h2 class="sec-title reveal">Groom &amp;<br>Bride</h2>
       <div class="rule reveal"><i></i></div>
       <p class="couple-intro reveal">
         Kami adalah sepasang manusia yang sedang berbahagia. Kami mengundang Bapak/Ibu/Saudara sekalian untuk menghadiri hari bahagia kami. Ini adalah kami.
       </p>
 
       <div class="person reveal-left">
-        <div class="photo-wrap"><img class="photo" id="bride-photo" alt="Mempelai Wanita" /></div>
-        <div class="name" id="bride-name">Lia</div>
-        <div class="plaque">
-          <div class="role">Mempelai Wanita</div>
-          <div class="full" id="bride-full">Andi Aulia Rezky</div>
-          <div class="parents" id="bride-parents"></div>
-          <a class="ig" id="bride-ig" target="_blank" rel="noopener">@instagram</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- frame kedua: mempelai pria -->
-    <section id="couple2" class="band-cream2">
-      <div class="amp-wrap reveal-zoom"><div class="amp"><b>&amp;</b></div></div>
-
-      <div class="person kanan reveal-right">
         <div class="photo-wrap"><img class="photo" id="groom-photo" alt="Mempelai Pria" /></div>
         <div class="name" id="groom-name">Ozan</div>
         <div class="plaque">
@@ -987,6 +972,22 @@
           <div class="full" id="groom-full">Andi Fauzan Ramadhan</div>
           <div class="parents" id="groom-parents"></div>
           <a class="ig" id="groom-ig" target="_blank" rel="noopener">@instagram</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- frame kedua: mempelai wanita -->
+    <section id="couple2" class="band-cream2">
+      <div class="amp-wrap reveal-zoom"><div class="amp"><b>&amp;</b></div></div>
+
+      <div class="person kanan reveal-right">
+        <div class="photo-wrap"><img class="photo" id="bride-photo" alt="Mempelai Wanita" /></div>
+        <div class="name" id="bride-name">Lia</div>
+        <div class="plaque">
+          <div class="role">Mempelai Wanita</div>
+          <div class="full" id="bride-full">Andi Aulia Rezky</div>
+          <div class="parents" id="bride-parents"></div>
+          <a class="ig" id="bride-ig" target="_blank" rel="noopener">@instagram</a>
         </div>
       </div>
     </section>
@@ -1203,34 +1204,35 @@ const CONFIG = {
     {
       "type": "hero",
       "note": "Sakinah, Mawaddah, wa Rahmah",
-      "bg": "galeri1.webp",
-      "veil": 0.12
+      "bg": "galeri9.webp",
+      "white": true,
+      "veil": 0.3
     },
     {
       "type": "ayat",
       "white": true,
-      "veil": 0.35,
-      "bg": "galeri2.webp"
+      "veil": 0.45,
+      "bg": "galeri6.webp"
     },
     {
       "type": "photo",
-      "src": "galeri3.webp"
+      "src": "galeri17.webp"
     },
     {
       "type": "photo",
-      "src": "galeri4.webp"
+      "src": "galeri7.webp"
     },
     {
       "type": "couple",
-      "bg": "galeri5.webp",
+      "bg": "galeri15.webp",
       "white": true,
-      "veil": 0.4
+      "veil": 0.45
     },
     {
       "type": "hormat",
-      "bg": "galeri6.webp",
+      "bg": "galeri21.webp",
       "white": true,
-      "veil": 0.45
+      "veil": 0.5
     }
   ],
   "mainDate": "2026-07-16T10:00+08:00",
@@ -1302,7 +1304,6 @@ const CONFIG = {
   ],
   "music": [],
   "openJingle": "",
-  "coverNames": "dr. Muhammad Farid & Henny Puspita Syarifuddin, S.Pd., Gr.",
   "autoScroll": true,
   "petals": false,
   "sparkles": true,
@@ -1334,8 +1335,8 @@ if (guest && String(CONFIG.sheetUrl || "").indexOf("http") === 0) {
 }
 
 // ---- Fill cover, gerbang & monogram ----
-const coupleNames = CONFIG.bride.nick + " & " + CONFIG.groom.nick;   // mempelai wanita disebut dulu
-const mono = (CONFIG.bride.nick[0] || "A").toUpperCase() + "·" + (CONFIG.groom.nick[0] || "B").toUpperCase();
+const coupleNames = CONFIG.groom.nick + " & " + CONFIG.bride.nick;   // mempelai pria disebut dulu
+const mono = (CONFIG.groom.nick[0] || "A").toUpperCase() + "·" + (CONFIG.bride.nick[0] || "B").toUpperCase();
 $("#cover-names").textContent = CONFIG.coverNames || coupleNames;
 $("#g-names").textContent = coupleNames;
 ["#loader-mono","#g-mono","#prangko-mono","#segel-mono","#closing-mono"].forEach(s => { const el = $(s); if (el) el.textContent = mono; });
@@ -1447,6 +1448,14 @@ function fitOneLine(el, minPx){
   while ((el.scrollWidth > el.clientWidth || el.getBoundingClientRect().width > limit()) && fs > minPx) {
     fs -= 1; el.style.fontSize = fs + "px";
   }
+  if (el.scrollWidth <= el.clientWidth && el.getBoundingClientRect().width <= limit()) return;
+  // masih kepanjangan di ukuran minimum: izinkan turun baris (maks 2 baris)
+  el.style.whiteSpace = "normal";
+  el.style.fontSize = "";
+  fs = parseFloat(getComputedStyle(el).fontSize);
+  const lineH = () => parseFloat(getComputedStyle(el).lineHeight) || fs * 1.3;
+  const lines = () => Math.round(el.scrollHeight / lineH());
+  while (lines() > 2 && fs > minPx) { fs -= 1; el.style.fontSize = fs + "px"; }
 }
 function fitGuestName(){
   const el = $("#guest-name"); if (!el || !el.textContent.trim()) return;
@@ -1495,7 +1504,12 @@ $("#timeline").innerHTML = CONFIG.story.map((s, i) =>
 // ---- Gallery: kolase editorial bernomor + lightbox ----
 (function(){
   const grid = $("#gal-grid");
-  const pics = CONFIG.gallery.slice();   // urutan tetap (kolase tersusun, tidak diacak)
+  const pics = CONFIG.gallery.slice();
+  // acak urutan tiap kali undangan dibuka (Fisher-Yates)
+  for (let i = pics.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pics[i], pics[j]] = [pics[j], pics[i]];
+  }
   const box = $("#lightbox"), img = $("#lightbox-img"), count = $("#lb-count");
   if (!pics.length) { $("#gallery").style.display = "none"; return; }
   let cur = 0;
@@ -1508,9 +1522,9 @@ $("#timeline").innerHTML = CONFIG.story.map((s, i) =>
   function open(i){ show(i); box.classList.add("show"); document.documentElement.classList.add("modal-open"); }
   function close(){ box.classList.remove("show"); document.documentElement.classList.remove("modal-open"); }
 
-  // Pola kolase berulang per 5 foto: hero lebar, pasangan offset, pasangan offset balik...
-  // idx % 5 : 0=lebar, 1=tinggi turun, 2=tinggi, 3=tinggi, 4=tinggi turun (ganjil-genap berselang)
-  const pola = ["wide", "tall turun", "tall", "tall", "tall turun"];
+  // Pola kolase: semua bingkai portrait (foto sumber 2:3), pasangan offset berselang.
+  // Bingkai "wide" dihapus karena memotong foto portrait.
+  const pola = ["tall", "tall turun"];
   pics.forEach((src, i) => {
     const it = document.createElement("div");
     it.className = "gal-item " + pola[i % pola.length];
@@ -1742,16 +1756,16 @@ loadWishes();
     if (s.type === "couple") { const g = CONFIG.groom, b = CONFIG.bride; return `
       <div class="i-sub">Assalamu'alaikum Wr. Wb.</div>
       <div class="i-small">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami:</div>
-      <div class="i-name">${esc(b.full)}</div>
-      <div class="i-parents">${esc(b.childOrder)} dari<br>${ortu(b)}</div>
-      <div class="i-amp">Dengan</div>
       <div class="i-name">${esc(g.full)}</div>
-      <div class="i-parents">${esc(g.childOrder)} dari<br>${ortu(g)}</div>`; }
+      <div class="i-parents">${esc(g.childOrder)} dari<br>${ortu(g)}</div>
+      <div class="i-amp">Dengan</div>
+      <div class="i-name">${esc(b.full)}</div>
+      <div class="i-parents">${esc(b.childOrder)} dari<br>${ortu(b)}</div>`; }
     if (s.type === "hormat") { const g = CONFIG.groom, b = CONFIG.bride; return `
       <div class="i-small">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.</div>
       <div class="i-sub" style="margin-top:14px">Hormat Kami Yang Mengundang</div>
-      <div class="i-parents">${pair(b)}</div>
-      <div class="i-parents">${pair(g)}</div>`; }
+      <div class="i-parents">${pair(g)}</div>
+      <div class="i-parents">${pair(b)}</div>`; }
     let h = "";
     if (s.sub)  h += `<div class="i-sub">${esc(s.sub)}</div>`;
     if (s.big)  h += `<div class="i-big">${esc(String(s.big).replace("{names}", coupleNames))}</div>`;
