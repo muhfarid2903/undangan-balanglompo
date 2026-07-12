@@ -1916,9 +1916,19 @@ if (tracks.length) {
     audio.loop = true;
   }
 } else { mbtn.style.display = "none"; }
-function playMusic(){ audio.play().then(()=>mbtn.classList.add("playing")).catch(()=>{}); }
+// Mulai buffering musik diam-diam selagi tamu masih di layar gerbang,
+// supaya langsung berbunyi saat undangan dibuka (preload="none" di markup
+// agar unduhan musik tidak menyaingi foto cover ketika halaman pertama dimuat).
+// musicWanted mencegah load() membatalkan play() yang sudah diminta tamu.
+let musicWanted = false;
+if (tracks.length) {
+  const bufferMusic = () => { if (!musicWanted) { audio.preload = "auto"; audio.load(); } };
+  if (document.readyState === "complete") bufferMusic();
+  else window.addEventListener("load", bufferMusic, { once: true });
+}
+function playMusic(){ musicWanted = true; audio.play().then(()=>mbtn.classList.add("playing")).catch(()=>{}); }
 mbtn.addEventListener("click", () => {
-  if (audio.paused) { audio.play(); mbtn.classList.add("playing"); }
+  if (audio.paused) { musicWanted = true; audio.play(); mbtn.classList.add("playing"); }
   else { audio.pause(); mbtn.classList.remove("playing"); }
 });
 
