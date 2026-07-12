@@ -10,7 +10,7 @@
 const RSVP_SHEET = 'RSVP';
 const CHECKIN_SHEET = 'CheckIn';
 const DIBUKA_SHEET = 'Dibuka';
-const SITE = 'https://NAMA-REPO.github.io/';  // alamat undangan
+const SITE = 'https://faridhenny.balanglompo.com/';  // alamat undangan
 
 /* ============================================================
    SETUP DAFTAR TAMU TERPUSAT
@@ -71,7 +71,7 @@ function setDaftarFormulas(sh) {
     '"Terima Kasih"',
     '""',
     '"Hormat kami,"',
-    '"*Ani & Budi*"',
+    '"*Farid & Henny*"',
     '"__________________"',
     '""',
     '"Dibuat dengan ❤️ oleh *Undangan Balanglompo*"',
