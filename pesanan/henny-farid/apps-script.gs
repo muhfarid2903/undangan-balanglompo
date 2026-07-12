@@ -176,6 +176,27 @@ function rapikanDaftarTamu() {
 }
 
 /* ============================================================
+   RAPIKAN RSVP — jalankan dari editor bila tab RSVP punya baris
+   kosong (mis. isi selnya dihapus dengan tombol Delete, bukan
+   "Hapus baris"). Baris tanpa nama dibuang, sisanya naik rapat
+   dari baris 2. Tidak perlu Deploy.
+   ============================================================ */
+function rapikanRsvp() {
+  const sh = getRsvpSheet();
+  const maxRow = sh.getMaxRows();
+  if (maxRow < 2) { SpreadsheetApp.getUi().alert('Tab RSVP masih kosong.'); return; }
+  // Kolom A-E: Waktu, Nama, Kehadiran, Ucapan, Jumlah Tamu.
+  const rows = sh.getRange(2, 1, maxRow - 1, 5).getValues()
+    .filter(function (r) { return String(r[1]).trim() !== ''; });
+  if (rows.length) sh.getRange(2, 1, rows.length, 5).setValues(rows);
+  const firstEmpty = 2 + rows.length;
+  if (firstEmpty <= maxRow) {
+    sh.getRange(firstEmpty, 1, maxRow - firstEmpty + 1, 5).clearContent();
+  }
+  SpreadsheetApp.getUi().alert('Rapikan selesai: ' + rows.length + ' ucapan/RSVP kini berurutan dari baris 2.');
+}
+
+/* ============================================================
    TRIGGER OTOMATIS: tamu yang diketik manual langsung di Sheet
    otomatis diberi ID Check-in (kolom G) begitu namanya ditulis —
    tanpa perlu menjalankan isiIdTamu berulang. Aktif otomatis
