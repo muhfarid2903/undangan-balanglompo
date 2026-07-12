@@ -352,9 +352,11 @@ function doGet(e) {
   const sheet = getRsvpSheet();
   const rows = sheet.getDataRange().getValues();
   rows.shift();
-  const list = rows.map(function (r) {
-    return { t: r[0], name: r[1], attend: r[2], msg: r[3], guests: r[4] };
-  }).reverse();
+  // baris tanpa nama dilewati (mis. baris yang dikosongkan manual di Sheet)
+  const list = rows.filter(function (r) { return String(r[1] || '').trim() !== ''; })
+    .map(function (r) {
+      return { t: r[0], name: r[1], attend: r[2], msg: r[3], guests: r[4] };
+    }).reverse();
   return json(list);
 }
 
@@ -372,9 +374,10 @@ function buildRekap() {
 
   const rrows = getRsvpSheet().getDataRange().getValues();
   rrows.shift();
-  out.rsvp = rrows.map(function (r) {
-    return { t: r[0], name: r[1], attend: r[2], msg: r[3], guests: r[4] };
-  }).reverse();
+  out.rsvp = rrows.filter(function (r) { return String(r[1] || '').trim() !== ''; })
+    .map(function (r) {
+      return { t: r[0], name: r[1], attend: r[2], msg: r[3], guests: r[4] };
+    }).reverse();
 
   const crows = getCheckinSheet().getDataRange().getValues();
   crows.shift();

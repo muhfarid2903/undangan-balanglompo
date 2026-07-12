@@ -1658,7 +1658,9 @@ function relTime(t){
 }
 function renderWishes(list) {
   const seed = Array.isArray(CONFIG.seedWishes) ? CONFIG.seedWishes : [];
-  list = seed.concat(Array.isArray(list) ? list : []);
+  // saring baris tanpa nama (mis. baris Sheet yang dikosongkan, bukan dihapus)
+  list = seed.concat(Array.isArray(list) ? list : [])
+    .filter(w => String((w && w.name) || "").trim() !== "");
   if (!list.length) list = [{ name:"Keluarga Besar", attend:"Hadir", msg:"Selamat menempuh hidup baru, semoga menjadi keluarga sakinah, mawaddah, warahmah." }];
   $("#wishes").innerHTML = list.map(w => {
     const nm = esc(w.name);
