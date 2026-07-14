@@ -689,6 +689,13 @@
     margin-top: 12px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
     color: #fff; padding: 8px 16px; border-radius: 30px; font-size: 12px; cursor: pointer; font-family: var(--sans);
   }
+  /* dua tombol gift (Kirim & Konfirmasi) tampil sama lebar, rata tengah */
+  #gift .btn-pop { min-width: 250px; justify-content: center; }
+  /* tautan pintas di bawah kartu rekening -> buka popup konfirmasi */
+  .gc-link {
+    display: block; margin: 16px auto 4px; background: none; border: none; cursor: pointer;
+    font-family: var(--serif-i); font-style: italic; font-size: 14.5px; color: var(--green); text-decoration: underline;
+  }
 
   /* ---------- CLOSING : gerbang perpisahan ---------- */
   #closing { text-align: center; padding-top: 90px; padding-bottom: 100px; }
@@ -1115,6 +1122,7 @@
         <div class="segel"><b id="segel-mono">A·B</b></div>
       </div>
       <button type="button" class="btn-pop reveal" id="btn-gift">🎁 Kirim Hadiah</button>
+      <button type="button" class="btn-pop reveal" id="btn-gift-confirm">📝 Konfirmasi Hadiah</button>
     </section>
 
     <!-- ================= CLOSING ================= -->
@@ -1158,7 +1166,33 @@
     <button class="popup-close" title="Tutup" aria-label="Tutup"><span>✕</span></button>
     <div class="popup-title">Wedding Gift</div>
     <div class="popup-sub">Pilih rekening, lalu salin nomornya</div>
-    <div class="popup-body"><div id="gift-list"></div></div>
+    <div class="popup-body">
+      <div id="gift-list"></div>
+      <button type="button" class="gc-link" id="gift-to-confirm">Konfirmasi pengiriman hadiah di sini →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= POPUP: KONFIRMASI HADIAH ================= -->
+<div class="popup" id="popup-gift-confirm">
+  <div class="popup-card">
+    <button class="popup-close" title="Tutup" aria-label="Tutup"><span>✕</span></button>
+    <div class="popup-title">Konfirmasi Hadiah</div>
+    <div class="popup-sub">Mohon isi konfirmasi di bawah agar kami dapat mencatat &amp; menyampaikan terima kasih 🙏</div>
+    <div class="popup-body">
+      <form class="form" id="gift-form">
+        <label>Nama</label>
+        <input type="text" id="g-name" required placeholder="Nama kamu" />
+        <label>Dikirim Melalui</label>
+        <select id="g-via"></select>
+        <label>Nominal / Bentuk Hadiah <small>(opsional)</small></label>
+        <input type="text" id="g-amount" placeholder="cth: Emas batang 74kg" />
+        <label>Catatan <small>(opsional)</small></label>
+        <textarea id="g-note" placeholder="Pesan atau catatan untuk kedua mempelai..."></textarea>
+        <button type="submit" class="btn-submit">Kirim Konfirmasi</button>
+        <div id="gift-status" class="rsvp-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -1595,6 +1629,50 @@ $$(".btn-copy").forEach(b => b.addEventListener("click", () => {
   });
 }));
 
+// ---- Konfirmasi hadiah (popup sendiri) ----
+// Pilihan "Dikirim Melalui" mengikuti daftar rekening di CONFIG.gifts + Lainnya.
+$("#g-via").innerHTML = CONFIG.gifts.map(g => `<option>${esc(g.bank)}</option>`).join("")
+  + `<option>Lainnya</option>`;
+if (guest) $("#g-name").value = safeDecode(guest);   // prefill spt form RSVP (tetap bisa diedit)
+function giftStatus(msg, type){
+  const el = $("#gift-status");
+  el.textContent = msg;
+  el.className = "rsvp-status show " + (type || "");
+}
+$("#gift-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const w = {
+    type: "gift",
+    name: $("#g-name").value.trim(),
+    via: $("#g-via").value,
+    amount: $("#g-amount").value.trim(),
+    note: $("#g-note").value.trim(),
+  };
+  if (!w.name) { giftStatus("Mohon isi nama dulu ya 🙏", "err"); $("#g-name").focus(); return; }
+  const btn = $("#gift-form .btn-submit"); const old = btn.textContent;
+  btn.disabled = true; btn.textContent = "Mengirim…"; giftStatus("", "");
+  const done = () => {
+    btn.disabled = false; btn.textContent = old;
+    $("#gift-form").reset();
+    if (guest) $("#g-name").value = safeDecode(guest);
+    giftStatus("Terima kasih banyak 💛 Konfirmasi hadiahmu sudah kami terima.", "ok");
+  };
+  const fail = () => {
+    btn.disabled = false; btn.textContent = old;   // isian dibiarkan agar bisa kirim ulang
+    giftStatus("Koneksi sepertinya bermasalah. Mohon cek internet, lalu tekan Kirim sekali lagi 🙏", "err");
+  };
+  if (SHEET) {
+    // pola sama dgn RSVP: no-cors tanpa preflight, batas 12 dtk agar tak menggantung
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+    fetch(gasUrl(SHEET, ""), { method: "POST", mode: "no-cors", body: JSON.stringify(w), signal: ctrl.signal })
+      .then(() => { clearTimeout(timer); done(); })
+      .catch(() => { clearTimeout(timer); fail(); });
+  } else {
+    done();   // mode demo tanpa backend
+  }
+});
+
 // ---- Popup (Ucapan & Amplop Digital) ----
 function openPopup(sel){ $(sel).classList.add("show"); document.documentElement.classList.add("modal-open"); }
 function closePopup(p){ p.classList.remove("show"); document.documentElement.classList.remove("modal-open"); }
@@ -1605,6 +1683,9 @@ $$(".popup").forEach(p => {
 window.addEventListener("keydown", (e) => { if (e.key === "Escape") $$(".popup.show").forEach(closePopup); });
 $("#btn-wishes").addEventListener("click", () => openPopup("#popup-wishes"));
 $("#btn-gift").addEventListener("click", () => openPopup("#popup-gift"));
+$("#btn-gift-confirm").addEventListener("click", () => openPopup("#popup-gift-confirm"));
+// pintasan dari popup rekening -> popup konfirmasi
+$("#gift-to-confirm").addEventListener("click", () => { closePopup($("#popup-gift")); openPopup("#popup-gift-confirm"); });
 
 // ---- Countdown ----
 function tick() {

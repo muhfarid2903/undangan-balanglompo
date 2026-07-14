@@ -10,6 +10,7 @@
 const RSVP_SHEET = 'RSVP';
 const CHECKIN_SHEET = 'CheckIn';
 const DIBUKA_SHEET = 'Dibuka';
+const HADIAH_SHEET = 'Hadiah';
 const SITE = 'https://faridhenny.balanglompo.com/';  // alamat undangan
 
 /* ============================================================
@@ -316,6 +317,21 @@ function doPost(e) {
       return json({ ok: true });
     }
 
+    // --- Konfirmasi hadiah (form di popup Wedding Gift) ---
+    if (data.type === 'gift') {
+      const sheet = getHadiahSheet();
+      const name = String(data.name || '').trim().slice(0, 100);
+      if (!name) return json({ ok: false, error: 'nama kosong' });
+      sheet.appendRow([
+        new Date(),
+        name,
+        String(data.via || '').slice(0, 60),
+        String(data.amount || '').slice(0, 60),
+        String(data.note || '').slice(0, 300)
+      ]);
+      return json({ ok: true });
+    }
+
     // --- RSVP & ucapan ---
     const sheet = getRsvpSheet();
     sheet.appendRow([
@@ -441,6 +457,16 @@ function getCheckinSheet() {
   if (!sheet) {
     sheet = ss.insertSheet(CHECKIN_SHEET);
     sheet.appendRow(['Waktu Datang', 'Nama Tamu', 'ID']);
+  }
+  return sheet;
+}
+
+function getHadiahSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(HADIAH_SHEET);
+  if (!sheet) {
+    sheet = ss.insertSheet(HADIAH_SHEET);
+    sheet.appendRow(['Waktu', 'Nama', 'Dikirim Melalui', 'Nominal / Bentuk', 'Catatan']);
   }
   return sheet;
 }
